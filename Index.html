@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiFi Network Analyzer — Démonstration</title>
+
+<style>
+:root {
+    --bg: #05070a;
+    --panel: #0b1016;
+    --panel2: #101720;
+    --border: #202b36;
+    --text: #d9e2ea;
+    --muted: #71808d;
+    --green: #00e676;
+    --orange: #ff9800;
+    --red: #ff3d4d;
+    --blue: #29b6f6;
+    --purple: #9c6cff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(circle at top right, rgba(41,182,246,.08), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(0,230,118,.05), transparent 30%),
+        var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* HEADER */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(5,7,10,.94);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: auto;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 800;
+    letter-spacing: .5px;
+}
+
+.logo-icon {
+    width: 38px;
+    height: 38px;
+    border: 2px solid var(--green);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--green);
+    font-weight: 900;
+}
+
+.demo {
+    color: var(--orange);
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid rgba(255,152,0,.35);
+    padding: 6px 9px;
+    border-radius: 6px;
+}
+
+/* MAIN */
+
+.container {
+    width: min(1400px, calc(100% - 32px));
+    margin: 30px auto 80px;
+}
+
+.hero {
+    margin-bottom: 25px;
+}
+
+.hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(26px, 4vw, 42px);
+}
+
+.hero p {
+    margin: 0;
+    color: var(--muted);
+}
+
+/* CONTROLS */
+
+.controls {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 800;
+    color: #000;
+    background: var(--green);
+    transition: .2s;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+button.stop {
+    background: var(--red);
+    color: white;
+}
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--muted);
+}
+
+.dot.running {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+}
+
+/* STATS */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+}
+
+.stat-value {
+    margin-top: 7px;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.stat-value.red {
+    color: var(--red);
+}
+
+.stat-value.green {
+    color: var(--green);
+}
+
+.stat-value.blue {
+    color: var(--blue);
+}
+
+/* GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 18px;
+}
+
+/* PANELS */
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.panel-header {
+    padding: 14px 17px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-title {
+    font-weight: 800;
+}
+
+.badge {
+    font-size: 11px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: rgba(0,230,118,.08);
+    color: var(--green);
+}
+
+/* NETWORK TABLE */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    font-size: 13px;
+}
+
+th {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+tr:hover td {
+    background: rgba(255,255,255,.025);
+}
+
+.ip {
+    font-family: monospace;
+    color: var(--blue);
+}
+
+.port {
+    font-family: monospace;
+    color: var(--orange);
+}
+
+.blocked {
+    color: var(--red);
+    font-weight: 800;
+}
+
+.allowed {
+    color: var(--green);
+    font-weight: 800;
+}
+
+.game {
+    font-weight: 700;
+}
+
+.game.fortnite {
+    color: #9c6cff;
+}
+
+.game.epic {
+    color: #ffffff;
+}
+
+/* TERMINAL */
+
+.terminal {
+    height: 520px;
+    overflow-y: auto;
+    padding: 15px;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    font-size: 12px;
+    line-height: 1.65;
+    background: #020304;
+    scroll-behavior: smooth;
+}
+
+.terminal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+    background: #26313b;
+    border-radius: 5px;
+}
+
+.line {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.time {
+    color: #596875;
+}
+
+.info {
+    color: var(--blue);
+}
+
+.success {
+    color: var(--green);
+}
+
+.warning {
+    color: var(--orange);
+}
+
+.error {
+    color: var(--red);
+}
+
+.fortnite-line {
+    color: #c09cff;
+}
+
+.epic-line {
+    color: #e9edf1;
+}
+
+.muted {
+    color: #61707c;
+}
+
+/* DEVICE */
+
+.device {
+    padding: 15px;
+}
+
+.device-item {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+.device-item:last-child {
+    border-bottom: 0;
+}
+
+.device-name {
+    font-weight: 700;
+}
+
+.device-meta {
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: monospace;
+}
+
+/* PROGRESS */
+
+.progress-wrap {
+    margin-top: 5px;
+    height: 5px;
+    background: #182029;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress {
+    width: 0%;
+    height: 100%;
+    background: var(--green);
+    transition: width .5s linear;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .container {
+        width: calc(100% - 20px);
+        margin-top: 20px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat {
+        padding: 13px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+    }
+
+    .terminal {
+        height: 430px;
+        font-size: 11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">Wi</div>
+            <div>NETWORK ANALYZER</div>
+        </div>
+
+        <div class="demo">
+            MODE DÉMONSTRATION
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>Analyse du réseau Wi-Fi</h1>
+        <p>
+            Analyse simulée des communications détectées sur le réseau privé.
+        </p>
+    </section>
+
+    <section class="controls">
+
+        <button id="startBtn" onclick="startTest()">
+            ▶ LANCER LE TEST
+        </button>
+
+        <button id="stopBtn" class="stop" onclick="stopTest()" disabled>
+            ■ ARRÊTER
+        </button>
+
+        <div class="status">
+            <span id="statusDot" class="dot"></span>
+            <span id="statusText">Analyse inactive</span>
+        </div>
+
+        <div style="margin-left:auto;color:#71808d;font-size:12px;">
+            Cycle : <strong id="cycle">0</strong> / 300 sec
+        </div>
+
+    </section>
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-label">Appareils détectés</div>
+            <div class="stat-value blue" id="devices">0</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">Paquets analysés</div>
+            <div class="stat-value green" id="packets">0</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">Connexions bloquées</div>
+            <div class="stat-value red" id="blocked">0</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">Anomalies</div>
+            <div class="stat-value red" id="anomalies">0</div>
+        </div>
+
+    </div>
+
+    <div class="panel" style="margin-bottom:18px;">
+
+        <div class="panel-header">
+            <div class="panel-title">
+                Progression de l'analyse
+            </div>
+
+            <div class="badge">
+                SIMULATION
+            </div>
+        </div>
+
+        <div style="padding:15px;">
+            <div class="progress-wrap">
+                <div class="progress" id="progress"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="grid">
+
+        <!-- NETWORK -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+                <div class="panel-title">
+                    Communications détectées
+                </div>
+
+                <div class="badge">
+                    LIVE
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Heure</th>
+                            <th>IP locale</th>
+                            <th>Service</th>
+                            <th>Port</th>
+                            <th>Protocole</th>
+                            <th>État</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="networkTable"></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- DEVICES -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+                <div class="panel-title">
+                    Appareils du réseau
+                </div>
+            </div>
+
+            <div class="device" id="devicesList">
+
+                <div class="device-item">
+                    <div class="device-name">
+                        PC-BUREAU
+                    </div>
+                    <div class="device-meta">
+                        192.168.1.21 · Ethernet
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <div class="device-name">
+                        PC-GAMING
+                    </div>
+                    <div class="device-meta">
+                        192.168.1.34 · Wi-Fi 5 GHz
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <div class="device-name">
+                        SMARTPHONE
+                    </div>
+                    <div class="device-meta">
+                        192.168.1.45 · Wi-Fi
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <div class="device-name">
+                        TV-SALON
+                    </div>
+                    <div class="device-meta">
+                        192.168.1.52 · Wi-Fi
+                    </div>
+                </div>
+
+                <div class="device-item">
+                    <div class="device-name">
+                        NAS-SERVER
+                    </div>
+                    <div class="device-meta">
+                        192.168.1.10 · Ethernet
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- TERMINAL -->
+
+    <section class="panel" style="margin-top:18px;">
+
+        <div class="panel-header">
+
+            <div class="panel-title">
+                Terminal
+            </div>
+
+            <div class="badge">
+                NETWORK MONITOR
+            </div>
+
+        </div>
+
+        <div class="terminal" id="terminal">
+
+            <div class="line muted">
+                Network Analyzer v4.8.2 — DEMO MODE
+            </div>
+
+            <div class="line muted">
+                ------------------------------------------------------------
+            </div>
+
+            <div class="line info">
+                Initialisation du moteur d'analyse...
+            </div>
+
+            <div class="line info">
+                En attente du lancement du test.
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+/*
+    ==========================================================
+    NETWORK ANALYZER — DEMONSTRATION UNIQUEMENT
+    Aucune analyse réseau réelle.
+    ==========================================================
+*/
+
+const terminal = document.getElementById("terminal");
+const table = document.getElementById("networkTable");
+
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+
+const progress = document.getElementById("progress");
+
+const devicesCounter = document.getElementById("devices");
+const packetsCounter = document.getElementById("packets");
+const blockedCounter = document.getElementById("blocked");
+const anomaliesCounter = document.getElementById("anomalies");
+
+const cycleCounter = document.getElementById("cycle");
+
+let running = false;
+let timer = null;
+
+let seconds = 0;
+let packets = 0;
+let blocked = 0;
+let anomalies = 0;
+
+const localIPs = [
+    "192.168.1.21",
+    "192.168.1.34",
+    "192.168.1.45",
+    "192.168.1.52",
+    "192.168.1.10",
+    "192.168.1.67",
+    "192.168.1.78"
+];
+
+const normalServices = [
+    {
+        name: "DNS",
+        port: 53,
+        protocol: "UDP",
+        state: "AUTORISÉ"
+    },
+    {
+        name: "HTTPS",
+        port: 443,
+        protocol: "TCP",
+        state: "AUTORISÉ"
+    },
+    {
+        name: "HTTP",
+        port: 80,
+        protocol: "TCP",
+        state: "AUTORISÉ"
+    },
+    {
+        name: "DHCP",
+        port: 67,
+        protocol: "UDP",
+        state: "AUTORISÉ"
+    },
+    {
+        name: "NTP",
+        port: 123,
+        protocol: "UDP",
+        state: "AUTORISÉ"
+    }
+];
+
+const gameServices = [
+    {
+        name: "FORTNITE",
+        port: 5222,
+        protocol: "TCP",
+        state: "BLOQUÉ"
+    },
+    {
+        name: "FORTNITE",
+        port: 5795,
+        protocol: "UDP",
+        state: "BLOQUÉ"
+    },
+    {
+        name: "FORTNITE",
+        port: 5796,
+        protocol: "UDP",
+        state: "BLOQUÉ"
+    },
+    {
+        name: "EPIC GAMES",
+        port: 443,
+        protocol: "TCP",
+        state: "BLOQUÉ"
+    },
+    {
+        name: "EPIC GAMES",
+        port: 80,
+        protocol: "TCP",
+        state: "BLOQUÉ"
+    },
+    {
+        name: "EPIC GAMES",
+        port: 5222,
+        protocol: "TCP",
+        state: "BLOQUÉ"
+    }
+];
+
+
+/* ----------------------------------------------------------
+   HEURE
+---------------------------------------------------------- */
+
+function getTime() {
+
+    const d = new Date();
+
+    return d.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+}
+
+
+/* ----------------------------------------------------------
+   TERMINAL
+---------------------------------------------------------- */
+
+function terminalLine(text, type = "") {
+
+    const line = document.createElement("div");
+
+    line.className = "line " + type;
+
+    line.innerHTML =
+        `<span class="time">[${getTime()}]</span> ${text}`;
+
+    terminal.appendChild(line);
+
+    terminal.scrollTop = terminal.scrollHeight;
+
+}
+
+
+/* ----------------------------------------------------------
+   TABLEAU
+---------------------------------------------------------- */
+
+function addNetworkEntry(service, ip) {
+
+    const row = document.createElement("tr");
+
+    let gameClass = "";
+
+    if (service.name === "FORTNITE") {
+        gameClass = "game fortnite";
+    }
+
+    if (service.name === "EPIC GAMES") {
+        gameClass = "game epic";
+    }
+
+    const stateClass =
+        service.state === "BLOQUÉ"
+        ? "blocked"
+        : "allowed";
+
+    row.innerHTML = `
+        <td>${getTime()}</td>
+        <td class="ip">${ip}</td>
+        <td class="${gameClass}">${service.name}</td>
+        <td class="port">${service.port}</td>
+        <td>${service.protocol}</td>
+        <td class="${stateClass}">
+            ${service.state}
+        </td>
+    `;
+
+    table.prepend(row);
+
+    /*
+        On garde uniquement les 30 dernières lignes
+    */
+
+    while (table.children.length > 30) {
+        table.removeChild(table.lastChild);
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   ANALYSE
+---------------------------------------------------------- */
+
+function generateTraffic() {
+
+    packets += Math.floor(Math.random() * 40) + 10;
+
+    packetsCounter.textContent =
+        packets.toLocaleString("fr-FR");
+
+
+    /*
+        Toutes les quelques secondes :
+        FORTNITE / EPIC GAMES
+    */
+
+    const gameChance = Math.random();
+
+    let service;
+
+    if (gameChance < 0.38) {
+
+        service =
+            gameServices[
+                Math.floor(Math.random() * gameServices.length)
+            ];
+
+        blocked++;
+
+        blockedCounter.textContent = blocked;
+
+        if (service.name === "FORTNITE") {
+
+            terminalLine(
+                `CONNEXION DÉTECTÉE → <strong>FORTNITE</strong> | Port ${service.port}/${service.protocol} | <strong>BLOQUÉ</strong>`,
+                "fortnite-line"
+            );
+
+        } else {
+
+            terminalLine(
+                `CONNEXION DÉTECTÉE → <strong>EPIC GAMES</strong> | Port ${service.port}/${service.protocol} | <strong>BLOQUÉ</strong>`,
+                "epic-line"
+            );
+
+        }
+
+    } else {
+
+        service =
+            normalServices[
+                Math.floor(Math.random() * normalServices.length)
+            ];
+
+        terminalLine(
+            `Trafic ${service.name} détecté depuis ${localIPs[Math.floor(Math.random() * localIPs.length)]}:${service.port}`,
+            "success"
+        );
+
+    }
+
+
+    const ip =
+        localIPs[
+            Math.floor(Math.random() * localIPs.length)
+        ];
+
+    addNetworkEntry(service, ip);
+
+
+    /*
+        Quelques anomalies fictives
+    */
+
+    if (Math.random() < 0.07) {
+
+        anomalies++;
+
+        anomaliesCounter.textContent = anomalies;
+
+        terminalLine(
+            `ANOMALIE : tentative de connexion inhabituelle détectée depuis ${ip}`,
+            "warning"
+        );
+
+    }
+
+
+    /*
+        Défilement automatique de la page
+    */
+
+    window.scrollBy({
+        top: 120,
+        behavior: "smooth"
+    });
+
+}
+
+
+/* ----------------------------------------------------------
+   CYCLE 5 MINUTES
+---------------------------------------------------------- */
+
+function tick() {
+
+    if (!running) return;
+
+    seconds++;
+
+    cycleCounter.textContent = seconds;
+
+    const percentage =
+        (seconds / 300) * 100;
+
+    progress.style.width =
+        Math.min(percentage, 100) + "%";
+
+
+    /*
+        Analyse toutes les 1 à 3 secondes
+    */
+
+    if (
+        seconds === 1 ||
+        seconds % 2 === 0 ||
+        Math.random() < 0.25
+    ) {
+
+        generateTraffic();
+
+    }
+
+
+    /*
+        Après 5 minutes :
+        on recommence automatiquement
+    */
+
+    if (seconds >= 300) {
+
+        terminalLine(
+            "============================================================",
+            "muted"
+        );
+
+        terminalLine(
+            "FIN DU CYCLE DE 5 MINUTES",
+            "success"
+        );
+
+        terminalLine(
+            "Redémarrage automatique de la démonstration...",
+            "info"
+        );
+
+        seconds = 0;
+
+        progress.style.width = "0%";
+
+        setTimeout(() => {
+
+            if (running) {
+
+                terminalLine(
+                    "NOUVEAU CYCLE D'ANALYSE",
+                    "info"
+                );
+
+            }
+
+        }, 500);
+
+    }
+
+}
+
+
+/* ----------------------------------------------------------
+   LANCER
+---------------------------------------------------------- */
+
+function startTest() {
+
+    if (running) return;
+
+    running = true;
+
+    seconds = 0;
+    packets = 0;
+    blocked = 0;
+    anomalies = 0;
+
+    devicesCounter.textContent = localIPs.length;
+    packetsCounter.textContent = "0";
+    blockedCounter.textContent = "0";
+    anomaliesCounter.textContent = "0";
+
+    table.innerHTML = "";
+
+    terminal.innerHTML = "";
+
+    statusText.textContent =
+        "Analyse en cours";
+
+    statusDot.classList.add("running");
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+
+    terminalLine(
+        "DÉMARRAGE DE L'ANALYSE DU RÉSEAU PRIVÉ...",
+        "info"
+    );
+
+    terminalLine(
+        "Mode : SIMULATION",
+        "warning"
+    );
+
+    terminalLine(
+        "Scan des appareils locaux...",
+        "info"
+    );
+
+    terminalLine(
+        "Réseau : 192.168.1.0/24",
+        "info"
+    );
+
+    terminalLine(
+        `${localIPs.length} appareils détectés.`,
+        "success"
+    );
+
+    terminalLine(
+        "Analyse des communications entrantes et sortantes...",
+        "info"
+    );
+
+    terminalLine(
+        "Filtrage des services : FORTNITE / EPIC GAMES",
+        "fortnite-line"
+    );
+
+    generateTraffic();
+
+    timer = setInterval(tick, 1000);
+
+}
+
+
+/* ----------------------------------------------------------
+   ARRÊTER
+---------------------------------------------------------- */
+
+function stopTest() {
+
+    running = false;
+
+    clearInterval(timer);
+
+    statusText.textContent =
+        "Analyse arrêtée";
+
+    statusDot.classList.remove("running");
+
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+
+    terminalLine(
+        "ANALYSE ARRÊTÉE PAR L'UTILISATEUR.",
+        "warning"
+    );
+
+}
+
+
+/* ----------------------------------------------------------
+   DÉFILEMENT TERMINAL
+---------------------------------------------------------- */
+
+let terminalScrollDirection = 1;
+
+setInterval(() => {
+
+    if (!running) return;
+
+    terminal.scrollTop += terminalScrollDirection * 35;
+
+    if (
+        terminal.scrollTop + terminal.clientHeight
+        >= terminal.scrollHeight - 10
+    ) {
+
+        terminalScrollDirection = -1;
+
+    }
+
+    if (terminal.scrollTop <= 0) {
+
+        terminalScrollDirection = 1;
+
+    }
+
+}, 1000);
+
+
+/* ----------------------------------------------------------
+   DÉFILEMENT PAGE
+---------------------------------------------------------- */
+
+setInterval(() => {
+
+    if (!running) return;
+
+    const maxScroll =
+        document.documentElement.scrollHeight
+        - window.innerHeight;
+
+    if (window.scrollY >= maxScroll - 50) {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    } else {
+
+        window.scrollBy({
+            top: 100,
+            behavior: "smooth"
+        });
+
+    }
+
+}, 5000);
+
+</script>
+
+</body>
+</html>
