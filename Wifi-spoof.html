@@ -1,3 +1,1349 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>WiFi Analyzer</title>
+
+
+<style>
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+
+    margin: 0;
+    padding: 0;
+
+    min-height: 100%;
+
+    background: #05070a;
+
+    color: #e8edf2;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+body {
+    overflow-x: hidden;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    width: 100%;
+
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 25px;
+
+    background: #0b0f14;
+
+    border-bottom:
+        1px solid #202832;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 10;
+}
+
+
+.logo {
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+
+.logo span {
+
+    color: #ff7a00;
+}
+
+
+.logo:hover span {
+
+    color: #ff9b42;
+}
+
+
+/* =====================================================
+   LIVE
+===================================================== */
+
+.live {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    color: #42e695;
+
+    font-size: 12px;
+
+    font-weight: bold;
+}
+
+
+.live-dot {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #42e695;
+
+    box-shadow:
+        0 0 8px #42e695;
+}
+
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container {
+
+    width:
+        min(
+            1200px,
+            calc(100% - 30px)
+        );
+
+    margin:
+        25px auto 50px;
+}
+
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+.card {
+
+    background: #0b0f14;
+
+    border:
+        1px solid #202832;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    margin-bottom: 18px;
+}
+
+
+.card-title {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+
+.card-title h2 {
+
+    margin: 0;
+
+    font-size: 16px;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+/* =====================================================
+   RESEAU
+===================================================== */
+
+.network-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 12px;
+}
+
+
+.info-box {
+
+    padding: 15px;
+
+    background: #080c10;
+
+    border:
+        1px solid #1d252e;
+
+    border-radius: 7px;
+}
+
+
+.info-label {
+
+    color: #89939e;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .7px;
+
+    margin-bottom: 8px;
+}
+
+
+.info-value {
+
+    font-family: monospace;
+
+    font-size: 16px;
+
+    font-weight: bold;
+}
+
+
+.ssid {
+
+    color: #42e695;
+}
+
+
+.channel {
+
+    color: #ffb15c;
+}
+
+
+.state {
+
+    color: #42e695;
+}
+
+
+.state.off {
+
+    color: #89939e;
+}
+
+
+.state.search {
+
+    color: #ffb15c;
+}
+
+
+.state.lost {
+
+    color: #ff7777;
+}
+
+
+/* =====================================================
+   APPAREILS
+===================================================== */
+
+.devices {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+}
+
+
+.device {
+
+    background: #080c10;
+
+    border:
+        1px solid #1d252e;
+
+    border-radius: 7px;
+
+    padding: 16px;
+
+    transition:
+        border-color .25s,
+        box-shadow .25s;
+}
+
+
+.device.receiving {
+
+    border-color:
+        rgba(66,230,149,.35);
+
+    box-shadow:
+        0 0 18px
+        rgba(66,230,149,.04);
+}
+
+
+.device.lost {
+
+    border-color:
+        rgba(255,75,75,.40);
+
+    box-shadow:
+        0 0 18px
+        rgba(255,75,75,.05);
+}
+
+
+.device-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+}
+
+
+.device-name {
+
+    font-weight: bold;
+}
+
+
+.device-status {
+
+    font-size: 10px;
+
+    color: #66717c;
+}
+
+
+.device-status.receiving {
+
+    color: #42e695;
+}
+
+
+.device-status.lost {
+
+    color: #ff7777;
+}
+
+
+.mac {
+
+    color: #89939e;
+
+    font-family: monospace;
+
+    font-size: 12px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =====================================================
+   RSSI
+===================================================== */
+
+.rssi-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+.rssi {
+
+    font-family: monospace;
+
+    font-size: 27px;
+
+    font-weight: bold;
+
+    color: #66717c;
+}
+
+
+.rssi.active {
+
+    color: #42e695;
+}
+
+
+.rssi.lost {
+
+    color: #ff7777;
+}
+
+
+/* =====================================================
+   BARRE DE SIGNAL
+===================================================== */
+
+.signal-bar {
+
+    width: 100%;
+
+    height: 8px;
+
+    background: #151c23;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    margin-top: 10px;
+}
+
+
+.signal-fill {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #42e695;
+
+    border-radius: 10px;
+
+    transition:
+        width .5s ease;
+}
+
+
+.signal-fill.lost {
+
+    width: 0% !important;
+
+    background: #ff4d4d;
+}
+
+
+.device-distance {
+
+    margin-top: 12px;
+
+    font-family: monospace;
+
+    color: #66717c;
+
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+.navigation {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 12px;
+}
+
+
+.nav-box {
+
+    padding: 18px;
+
+    background: #080c10;
+
+    border:
+        1px solid #1d252e;
+
+    border-radius: 7px;
+
+    text-align: center;
+}
+
+
+.nav-label {
+
+    color: #89939e;
+
+    font-size: 10px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 10px;
+}
+
+
+.nav-value {
+
+    font-family: monospace;
+
+    font-size: 20px;
+
+    font-weight: bold;
+}
+
+
+.direction {
+
+    color: #ff7a00;
+}
+
+
+.distance {
+
+    color: #42e695;
+}
+
+
+.convergence {
+
+    color: #42e695;
+}
+
+
+.convergence.lost {
+
+    color: #ff7777;
+}
+
+
+/* =====================================================
+   CONTROLES
+===================================================== */
+
+.controls {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    flex-wrap: wrap;
+}
+
+
+button {
+
+    height: 42px;
+
+    border-radius: 6px;
+
+    padding: 0 22px;
+
+    border:
+        1px solid #303943;
+
+    background: #121820;
+
+    color: #e8edf2;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    font-size: 12px;
+
+    letter-spacing: .5px;
+
+    transition: .2s;
+}
+
+
+button:hover {
+
+    background: #1a222b;
+}
+
+
+button.analyzer {
+
+    border-color: #42e695;
+
+    color: #42e695;
+}
+
+
+button.analyzer:hover {
+
+    background: #42e695;
+
+    color: #05070a;
+}
+
+
+button.stop {
+
+    border-color: #d94b4b;
+
+    color: #ff7777;
+}
+
+
+button.stop:hover {
+
+    background: #d94b4b;
+
+    color: white;
+}
+
+
+/* =====================================================
+   HISTORIQUE
+===================================================== */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    max-height: 420px;
+
+    overflow-y: auto;
+}
+
+
+table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 700px;
+
+    font-family: monospace;
+}
+
+
+thead {
+
+    position: sticky;
+
+    top: 0;
+
+    background: #10161d;
+}
+
+
+th {
+
+    text-align: left;
+
+    padding: 12px;
+
+    color: #89939e;
+
+    font-size: 10px;
+
+    font-weight: normal;
+
+    border-bottom:
+        1px solid #252e38;
+}
+
+
+td {
+
+    padding: 10px 12px;
+
+    font-size: 11px;
+
+    border-bottom:
+        1px solid #161d24;
+}
+
+
+.good {
+
+    color: #42e695;
+}
+
+
+.warning {
+
+    color: #ffb15c;
+}
+
+
+.danger {
+
+    color: #ff7777;
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer-info {
+
+    color: #66717c;
+
+    font-size: 11px;
+
+    text-align: right;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 800px) {
+
+    .header {
+
+        padding:
+            0 15px;
+    }
+
+
+    .container {
+
+        width:
+            calc(100% - 20px);
+
+        margin-top: 15px;
+    }
+
+
+    .network-grid,
+    .devices,
+    .navigation {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .card {
+
+        padding: 15px;
+    }
+
+
+    .logo {
+
+        font-size: 18px;
+    }
+
+
+    .controls {
+
+        flex-direction: column;
+    }
+
+
+    .controls button {
+
+        width: 100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div
+        class="logo"
+        onclick="analyzerClick()"
+        title="ANALYZER"
+    >
+
+        WIFI
+
+        <span>
+            ANALYZER
+        </span>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     RESEAU
+===================================================== -->
+
+<section class="card">
+
+
+    <div class="card-title">
+
+        <h2>
+            Réseau Wi-Fi
+        </h2>
+
+
+        <div class="live">
+
+            <span class="live-dot"></span>
+
+            VIRTUEL
+
+        </div>
+
+    </div>
+
+
+
+    <div class="network-grid">
+
+
+        <div class="info-box">
+
+            <div class="info-label">
+                SSID
+            </div>
+
+            <div class="info-value ssid">
+                Missmine_
+            </div>
+
+        </div>
+
+
+
+        <div class="info-box">
+
+            <div class="info-label">
+                Canal
+            </div>
+
+            <div class="info-value channel">
+                CH 6
+            </div>
+
+        </div>
+
+
+
+        <div class="info-box">
+
+            <div class="info-label">
+                État
+            </div>
+
+            <div
+                id="networkState"
+                class="info-value state off"
+            >
+
+                EN ATTENTE
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     APPAREILS
+===================================================== -->
+
+<section class="card">
+
+
+    <div class="card-title">
+
+        <h2>
+            Cibles
+        </h2>
+
+
+        <div
+            id="scanState"
+            class="live"
+        >
+
+            <span class="live-dot"></span>
+
+            ARRÊTÉ
+
+        </div>
+
+    </div>
+
+
+
+    <div class="devices">
+
+
+        <!-- APPAREIL 01 -->
+
+        <div
+            id="device1"
+            class="device"
+        >
+
+
+            <div class="device-header">
+
+                <span class="device-name">
+                    APPAREIL 01
+                </span>
+
+
+                <span
+                    id="status1"
+                    class="device-status"
+                >
+
+                    NON CONNECTÉ
+
+                </span>
+
+            </div>
+
+
+
+            <div class="mac">
+
+                E8:A0:CD:6D:54:64
+
+            </div>
+
+
+
+            <div class="rssi-row">
+
+                <span class="info-label">
+                    SIGNAL
+                </span>
+
+
+                <span
+                    id="rssi1"
+                    class="rssi"
+                >
+
+                    0 réception
+
+                </span>
+
+            </div>
+
+
+
+            <div class="signal-bar">
+
+                <div
+                    id="bar1"
+                    class="signal-fill"
+                >
+
+                </div>
+
+            </div>
+
+
+
+            <div
+                id="distance1"
+                class="device-distance"
+            >
+
+                Distance : --
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- APPAREIL 02 -->
+
+        <div
+            id="device2"
+            class="device"
+        >
+
+
+            <div class="device-header">
+
+                <span class="device-name">
+                    APPAREIL 02
+                </span>
+
+
+                <span
+                    id="status2"
+                    class="device-status"
+                >
+
+                    NON CONNECTÉ
+
+                </span>
+
+            </div>
+
+
+
+            <div class="mac">
+
+                C8:91:43:B9:CA:FC
+
+            </div>
+
+
+
+            <div class="rssi-row">
+
+                <span class="info-label">
+                    SIGNAL
+                </span>
+
+
+                <span
+                    id="rssi2"
+                    class="rssi"
+                >
+
+                    0 réception
+
+                </span>
+
+            </div>
+
+
+
+            <div class="signal-bar">
+
+                <div
+                    id="bar2"
+                    class="signal-fill"
+                >
+
+                </div>
+
+            </div>
+
+
+
+            <div
+                id="distance2"
+                class="device-distance"
+            >
+
+                Distance : --
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ANALYSE
+===================================================== -->
+
+<section class="card">
+
+
+    <div class="card-title">
+
+        <h2>
+            Recherche de signal
+        </h2>
+
+    </div>
+
+
+
+    <div class="navigation">
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                Direction
+            </div>
+
+
+            <div
+                id="direction"
+                class="nav-value direction"
+            >
+
+                --
+
+            </div>
+
+        </div>
+
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                Distance estimée
+            </div>
+
+
+            <div
+                id="distance"
+                class="nav-value distance"
+            >
+
+                -- m
+
+            </div>
+
+        </div>
+
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                Analyse
+            </div>
+
+
+            <div
+                id="convergence"
+                class="nav-value convergence"
+            >
+
+                --
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="controls">
+
+
+        <button
+            class="analyzer"
+            onclick="analyzerClick()"
+        >
+
+            ANALYZER
+
+        </button>
+
+
+        <button
+            class="stop"
+            onclick="stopSimulation()"
+        >
+
+            ARRÊTER
+
+        </button>
+
+
+    </div>
+
+
+
+    <div class="action-info">
+
+        <strong>FONCTIONNEMENT :</strong><br>
+
+        Premier clic sur ANALYZER :
+        déplacement vers la cible.<br>
+
+        Le point d'approche s'arrête
+        aléatoirement entre 4,5 m et 5,5 m.<br>
+
+        Nouveau clic :
+        inversion de direction.<br>
+
+        En éloignement, la perte de signal intervient
+        aléatoirement entre 18 m et 22 m.<br>
+
+        Dès la perte du signal,
+        le déplacement s'arrête immédiatement.<br>
+
+        Les deux appareils suivent simultanément
+        la même distance et le même comportement.
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     HISTORIQUE
+===================================================== -->
+
+<section class="card">
+
+
+    <div class="card-title">
+
+        <h2>
+            Historique RSSI
+        </h2>
+
+    </div>
+
+
+
+    <div class="table-wrapper">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        HEURE
+                    </th>
+
+                    <th>
+                        MAC
+                    </th>
+
+                    <th>
+                        RSSI
+                    </th>
+
+                    <th>
+                        MAC
+                    </th>
+
+                    <th>
+                        RSSI
+                    </th>
+
+                    <th>
+                        DISTANCE
+                    </th>
+
+                    <th>
+                        ÉTAT
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+
+            <tbody
+                id="history"
+            >
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</section>
+
+
+
+<div class="footer-info">
+
+    Simulation virtuelle —
+    aucune mesure radio réelle
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
 /* =====================================================
    ETAT GLOBAL
 ===================================================== */
@@ -12,51 +1358,40 @@ let analyzerTimer = null;
 /*
  * Distance actuelle.
  */
-
 let distance = 20;
 
 
 /*
- * Sens :
- *
  * -1 = rapprochement
  * +1 = éloignement
  */
-
 let movementDirection = -1;
 
 
 /*
- * Seuil de perte de signal.
- *
- * Tiré aléatoirement entre 18 et 22 m.
+ * Seuil de perte :
+ * entre 18 et 22 m.
  */
-
 let signalLossDistance = 20;
 
 
 /*
- * Seuil d'approche.
- *
- * Tiré aléatoirement entre 4.5 et 5.5 m.
+ * Distance d'approche :
+ * entre 4,5 et 5,5 m.
  */
-
 let closeDistance = 5;
 
 
 /*
- * Vitesse du déplacement.
+ * Déplacement lent.
  */
-
 const ANALYZER_INTERVAL = 700;
 
 
 /*
- * Variation par étape.
- *
- * Petite pour garder un déplacement lent.
+ * Variation minimale
+ * et maximale à chaque tick.
  */
-
 const MIN_STEP = 0.15;
 
 const MAX_STEP = 0.40;
@@ -69,28 +1404,22 @@ const MAX_STEP = 0.40;
 
 function createNewCycle() {
 
-
     /*
-     * Nouveau seuil de perte.
-     *
-     * Entre 18 et 22 m.
+     * Perte aléatoire entre
+     * 18 et 22 mètres.
      */
-
     signalLossDistance =
         18 +
         Math.random() * 4;
 
 
     /*
-     * Nouveau seuil d'approche.
-     *
-     * Entre 4.5 et 5.5 m.
+     * Arrêt d'approche aléatoire
+     * entre 4,5 et 5,5 mètres.
      */
-
     closeDistance =
         4.5 +
         Math.random();
-
 
 }
 
@@ -102,36 +1431,19 @@ function createNewCycle() {
 
 function startNewSession() {
 
-
     running = true;
 
     analyzerRunning = true;
 
-
-    /*
-     * On commence autour de 20 m.
-     */
-
     distance = 20;
 
-
-    /*
-     * Premier mouvement :
-     * vers la cible.
-     */
-
     movementDirection = -1;
-
-
-    /*
-     * Génère les seuils.
-     */
 
     createNewCycle();
 
 
     /*
-     * Etat interface.
+     * Etat réseau.
      */
 
     document
@@ -148,28 +1460,18 @@ function startNewSession() {
     document
         .getElementById("networkState")
         .textContent =
-        "RÉCEPTION ACTIVE";
+        "RECHERCHE";
 
 
     document
         .getElementById("networkState")
         .className =
-        "info-value state";
+        "info-value state search";
 
-
-    /*
-     * Première mesure.
-     */
 
     updateSignal();
 
-
     updateDirectionDisplay();
-
-
-    /*
-     * Démarre le déplacement.
-     */
 
     startAnalyzerTimer();
 
@@ -178,7 +1480,7 @@ function startNewSession() {
 
 
 /* =====================================================
-   ANALYZER
+   CLIC ANALYZER
 ===================================================== */
 
 function analyzerClick() {
@@ -186,7 +1488,7 @@ function analyzerClick() {
 
     /*
      * Premier clic :
-     * démarrage complet.
+     * démarrage.
      */
 
     if (!running) {
@@ -199,31 +1501,23 @@ function analyzerClick() {
 
 
     /*
-     * Si on était arrivé au seuil
-     * de rapprochement ou de perte,
-     * on inverse le sens.
+     * Clic suivant :
+     * inversion du sens.
      */
 
     movementDirection *= -1;
 
-
-    /*
-     * Nouveau cycle avec
-     * de nouveaux seuils aléatoires.
-     */
-
-    createNewCycle();
-
-
-    /*
-     * Relance le mouvement.
-     */
-
     analyzerRunning = true;
 
 
-    startAnalyzerTimer();
+    /*
+     * Si on repart vers l'extérieur
+     * depuis une distance déjà supérieure
+     * au nouveau seuil, le prochain tick
+     * provoquera immédiatement la perte.
+     */
 
+    startAnalyzerTimer();
 
     updateDirectionDisplay();
 
@@ -236,7 +1530,6 @@ function analyzerClick() {
 ===================================================== */
 
 function startAnalyzerTimer() {
-
 
     stopAnalyzerTimer();
 
@@ -252,11 +1545,10 @@ function startAnalyzerTimer() {
 
 
 /* =====================================================
-   STOP TIMER
+   ARRET TIMER
 ===================================================== */
 
 function stopAnalyzerTimer() {
-
 
     if (
         analyzerTimer !== null
@@ -291,9 +1583,8 @@ function analyzerTick() {
 
 
     /*
-     * Variation lente et aléatoire.
+     * Petit déplacement aléatoire.
      */
-
     const variation =
         MIN_STEP +
         Math.random() *
@@ -303,127 +1594,79 @@ function analyzerTick() {
         );
 
 
-    /*
-     * Déplacement.
-     */
-
     distance +=
         movementDirection *
         variation;
 
 
 
-    /* =================================================
-       RAPPROCHEMENT
-    ================================================= */
+    /*
+     * ================================================
+     * APPROCHE
+     * ================================================
+     *
+     * On ne descend jamais sous le point
+     * d'arrêt aléatoire.
+     */
 
     if (
-        movementDirection < 0
+        movementDirection < 0 &&
+        distance <= closeDistance
     ) {
 
-
-        /*
-         * Arrivée dans la zone
-         * 4.5 → 5.5 m.
-         */
-
-        if (
-            distance <= closeDistance
-        ) {
+        distance =
+            closeDistance;
 
 
-            /*
-             * On place précisément
-             * la distance au seuil.
-             */
-
-            distance =
-                closeDistance;
+        analyzerRunning = false;
 
 
-            /*
-             * Arrêt immédiat.
-             */
-
-            analyzerRunning = false;
+        stopAnalyzerTimer();
 
 
-            stopAnalyzerTimer();
+        updateSignal();
 
+        updateDirectionDisplay();
 
-            updateSignal();
+        addHistory();
 
-
-            updateDirectionDisplay();
-
-
-            addHistory();
-
-
-            return;
-
-        }
+        return;
 
     }
 
 
 
-    /* =================================================
-       ELOIGNEMENT
-    ================================================= */
+    /*
+     * ================================================
+     * ELOIGNEMENT
+     * ================================================
+     *
+     * Dès que le seuil de perte est atteint,
+     * on bloque la distance exactement à ce seuil.
+     */
 
     if (
-        movementDirection > 0
+        movementDirection > 0 &&
+        distance >= signalLossDistance
     ) {
 
-
-        /*
-         * Arrivée au seuil de perte.
-         *
-         * IMPORTANT :
-         * on ne continue PAS jusqu'à 22 m.
-         */
-
-        if (
-            distance >= signalLossDistance
-        ) {
+        distance =
+            signalLossDistance;
 
 
-            /*
-             * Distance exacte de perte.
-             */
-
-            distance =
-                signalLossDistance;
+        analyzerRunning = false;
 
 
-            /*
-             * Arrêt immédiat.
-             */
-
-            analyzerRunning = false;
+        stopAnalyzerTimer();
 
 
-            stopAnalyzerTimer();
+        updateSignal();
 
+        updateDirectionDisplay();
 
-            /*
-             * Affiche immédiatement
-             * la perte de signal.
-             */
+        addHistory();
 
-            updateSignal();
-
-
-            updateDirectionDisplay();
-
-
-            addHistory();
-
-
-            return;
-
-        }
+        return;
 
     }
 
@@ -435,9 +1678,7 @@ function analyzerTick() {
 
     updateSignal();
 
-
     updateDirectionDisplay();
-
 
     addHistory();
 
@@ -455,7 +1696,7 @@ function calculateRSSI(
 
 
     /*
-     * Valeurs simulées :
+     * Approximation virtuelle :
      *
      * 5 m  ≈ -40 dBm
      * 10 m ≈ -47 dBm
@@ -487,23 +1728,38 @@ function updateSignal() {
 
 
     /*
-     * Perte uniquement lorsque
-     * la distance atteint le seuil
-     * aléatoire du cycle.
+     * IMPORTANT :
+     *
+     * Le seuil de perte ne doit être
+     * considéré que lorsqu'on est
+     * dans la phase d'éloignement,
+     * ou lorsqu'on se trouve déjà
+     * au-delà du seuil.
+     *
+     * Cela évite qu'un seuil tiré à
+     * 18,5 m provoque une perte
+     * alors qu'on commence la recherche
+     * à 20 m en allant vers la cible.
      */
 
     const signalLost =
-        distance >=
-        signalLossDistance;
+        (
+            distance >= signalLossDistance &&
+            movementDirection > 0
+        ) ||
+        (
+            distance >= signalLossDistance &&
+            !analyzerRunning
+        );
 
 
-
-    /* =================================================
-       PERTE SIGNAL
-    ================================================= */
+    /*
+     * ================================================
+     * SIGNAL PERDU
+     * ================================================
+     */
 
     if (signalLost) {
-
 
         setDeviceLost(1);
 
@@ -535,13 +1791,14 @@ function updateSignal() {
             );
 
 
-
     } else {
 
 
-        /* =============================================
-           RECEPTION
-        ============================================= */
+        /*
+         * ============================================
+         * SIGNAL PRÉSENT
+         * ============================================
+         */
 
         setDeviceReceiving(
             1,
@@ -556,7 +1813,7 @@ function updateSignal() {
 
 
         /*
-         * RSSI.
+         * RSSI de base.
          */
 
         const baseRSSI =
@@ -566,7 +1823,7 @@ function updateSignal() {
 
 
         /*
-         * Petite variation indépendante.
+         * Bruit radio virtuel.
          */
 
         const noise1 =
@@ -591,6 +1848,10 @@ function updateSignal() {
             noise2;
 
 
+        /*
+         * Affichage.
+         */
+
         document
             .getElementById("rssi1")
             .textContent =
@@ -614,7 +1875,8 @@ function updateSignal() {
             (
                 (20 - distance) /
                 15
-            ) * 27;
+            ) *
+            27;
 
 
         const barWidth =
@@ -655,6 +1917,10 @@ function updateSignal() {
             );
 
 
+        /*
+         * Etat réseau.
+         */
+
         document
             .getElementById("networkState")
             .textContent =
@@ -666,6 +1932,10 @@ function updateSignal() {
             .className =
             "info-value state";
 
+
+        /*
+         * Analyse.
+         */
 
         const convergence =
             document.getElementById(
@@ -688,7 +1958,7 @@ function updateSignal() {
 
 
     /*
-     * Distance affichée.
+     * Distance.
      */
 
     const displayDistance =
@@ -796,7 +2066,6 @@ function setDeviceReceiving(
             "lost"
         );
 
-
     }
 
 }
@@ -899,45 +2168,57 @@ function updateDirectionDisplay() {
         );
 
 
+    /*
+     * Arrivé au point
+     * d'approche aléatoire.
+     */
+
     if (
-        !analyzerRunning
+        distance <= closeDistance + 0.001
     ) {
 
-
-        if (
-            movementDirection < 0
-        ) {
-
-            element.textContent =
-                closeDistance.toFixed(1) +
-                " m — ARRÊT";
-
-
-        } else {
-
-            element.textContent =
-                signalLossDistance.toFixed(1) +
-                " m — PERTE";
-
-        }
-
+        element.textContent =
+            distance.toFixed(1) +
+            " m — MINIMUM";
 
         return;
 
     }
 
 
+    /*
+     * Perte de signal :
+     * la distance reste exactement
+     * sur le seuil.
+     */
+
+    if (
+        distance >= signalLossDistance &&
+        !analyzerRunning &&
+        movementDirection > 0
+    ) {
+
+        element.textContent =
+            distance.toFixed(1) +
+            " m — SIGNAL PERDU";
+
+        return;
+
+    }
+
+
+    /*
+     * Mouvement vers la cible.
+     */
+
     if (
         movementDirection < 0
     ) {
 
-
         element.textContent =
             "← PLUS PROCHE";
 
-
     } else {
-
 
         element.textContent =
             "→ PLUS LOIN";
@@ -967,14 +2248,18 @@ function addHistory() {
         );
 
 
+    const signalLost =
+        distance >=
+        signalLossDistance;
+
+
     /*
-     * Perte de signal.
+     * ================================================
+     * PERTE SIGNAL
+     * ================================================
      */
 
-    if (
-        distance >=
-        signalLossDistance
-    ) {
+    if (signalLost) {
 
 
         row.innerHTML = `
@@ -1012,6 +2297,12 @@ function addHistory() {
 
     } else {
 
+
+        /*
+         * ============================================
+         * RÉCEPTION
+         * ============================================
+         */
 
         const baseRSSI =
             calculateRSSI(
@@ -1073,6 +2364,10 @@ function addHistory() {
     );
 
 
+    /*
+     * Maximum 60 lignes.
+     */
+
     while (
         body.children.length > 60
     ) {
@@ -1088,7 +2383,7 @@ function addHistory() {
 
 
 /* =====================================================
-   ARRET COMPLET
+   ARRET
 ===================================================== */
 
 function stopSimulation() {
@@ -1111,10 +2406,18 @@ function stopSimulation() {
     closeDistance = 5;
 
 
+    /*
+     * Appareils.
+     */
+
     setDeviceNeutral(1);
 
     setDeviceNeutral(2);
 
+
+    /*
+     * RSSI.
+     */
 
     document
         .getElementById("rssi1")
@@ -1128,6 +2431,10 @@ function stopSimulation() {
         "0 réception";
 
 
+    /*
+     * Barres.
+     */
+
     document
         .getElementById("bar1")
         .style.width =
@@ -1153,6 +2460,10 @@ function stopSimulation() {
             "lost"
         );
 
+
+    /*
+     * Distances.
+     */
 
     document
         .getElementById("distance1")
@@ -1171,6 +2482,10 @@ function stopSimulation() {
         .textContent =
         "-- m";
 
+
+    /*
+     * Navigation.
+     */
 
     document
         .getElementById("direction")
@@ -1191,6 +2506,10 @@ function stopSimulation() {
         );
 
 
+    /*
+     * Réseau.
+     */
+
     document
         .getElementById("networkState")
         .textContent =
@@ -1202,6 +2521,10 @@ function stopSimulation() {
         .className =
         "info-value state off";
 
+
+    /*
+     * Scan.
+     */
 
     document
         .getElementById("scanState")
@@ -1287,14 +2610,18 @@ function setDeviceNeutral(
 
 function getTime() {
 
-
     return new Date()
         .toLocaleTimeString(
             "fr-FR",
             {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit"
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit",
+
+                second:
+                    "2-digit"
             }
         );
 
@@ -1342,3 +2669,9 @@ window.addEventListener(
 
     }
 );
+
+</script>
+
+
+</body>
+</html>
