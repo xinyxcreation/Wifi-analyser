@@ -1,0 +1,1321 @@
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiFi Analyzer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #05070a;
+    color: #e8edf2;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.header {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    background: #0b0f14;
+    border-bottom: 1px solid #202832;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
+.logo span {
+    color: #ff7a00;
+}
+
+.live {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #42e695;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #42e695;
+    box-shadow: 0 0 8px #42e695;
+}
+
+.container {
+    width: min(1200px, calc(100% - 30px));
+    margin: 25px auto 50px;
+}
+
+.card {
+    background: #0b0f14;
+    border: 1px solid #202832;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+}
+
+.card-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.card-title h2 {
+    margin: 0;
+    font-size: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* =========================
+   RESEAU
+========================= */
+
+.network-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.info-box {
+    padding: 15px;
+    background: #080c10;
+    border: 1px solid #1d252e;
+    border-radius: 7px;
+}
+
+.info-label {
+    color: #89939e;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    margin-bottom: 8px;
+}
+
+.info-value {
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.ssid {
+    color: #42e695;
+}
+
+.channel {
+    color: #ffb15c;
+}
+
+.state {
+    color: #42e695;
+}
+
+/* =========================
+   APPAREILS
+========================= */
+
+.devices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.device {
+    background: #080c10;
+    border: 1px solid #1d252e;
+    border-radius: 7px;
+    padding: 16px;
+}
+
+.device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.device-name {
+    font-weight: bold;
+}
+
+.device-status {
+    font-size: 10px;
+    color: #42e695;
+}
+
+.mac {
+    color: #89939e;
+    font-family: monospace;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.rssi-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rssi {
+    font-family: monospace;
+    font-size: 27px;
+    font-weight: bold;
+    color: #42e695;
+}
+
+.signal-bar {
+    width: 100%;
+    height: 8px;
+    background: #151c23;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.signal-fill {
+    height: 100%;
+    width: 5%;
+    background: #42e695;
+    transition: width .7s ease;
+}
+
+.device-distance {
+    margin-top: 12px;
+    font-family: monospace;
+    color: #89939e;
+    font-size: 11px;
+}
+
+/* =========================
+   NAVIGATION
+========================= */
+
+.navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+.nav-box {
+    padding: 18px;
+    background: #080c10;
+    border: 1px solid #1d252e;
+    border-radius: 7px;
+    text-align: center;
+}
+
+.nav-label {
+    color: #89939e;
+    font-size: 10px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.nav-value {
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.direction {
+    color: #ff7a00;
+}
+
+.distance {
+    color: #42e695;
+}
+
+.convergence {
+    color: #42e695;
+}
+
+/* =========================
+   CONTROLES
+========================= */
+
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+button {
+    height: 42px;
+    border-radius: 6px;
+    padding: 0 22px;
+    border: 1px solid #303943;
+    background: #121820;
+    color: #e8edf2;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    letter-spacing: .5px;
+}
+
+button:hover {
+    background: #1a222b;
+}
+
+button.start {
+    border-color: #ff7a00;
+    color: #ff7a00;
+}
+
+button.start:hover {
+    background: #ff7a00;
+    color: #05070a;
+}
+
+button.stop {
+    border-color: #d94b4b;
+    color: #ff7777;
+}
+
+button.stop:hover {
+    background: #d94b4b;
+    color: white;
+}
+
+/* =========================
+   HISTORIQUE
+========================= */
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+    font-family: monospace;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    background: #10161d;
+}
+
+th {
+    text-align: left;
+    padding: 12px;
+    color: #89939e;
+    font-size: 10px;
+    font-weight: normal;
+    border-bottom: 1px solid #252e38;
+}
+
+td {
+    padding: 10px 12px;
+    font-size: 11px;
+    border-bottom: 1px solid #161d24;
+}
+
+.good {
+    color: #42e695;
+}
+
+.warning {
+    color: #ffb15c;
+}
+
+.footer-info {
+    color: #66717c;
+    font-size: 11px;
+    text-align: right;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 800px) {
+
+    .header {
+        padding: 0 15px;
+    }
+
+    .container {
+        width: calc(100% - 20px);
+        margin-top: 15px;
+    }
+
+    .network-grid,
+    .devices,
+    .navigation {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="logo">
+        WIFI <span>ANALYZER</span>
+    </div>
+
+    <div class="live">
+        <span class="live-dot"></span>
+        SIMULATION
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================
+         RESEAU
+    ========================== -->
+
+    <section class="card">
+
+        <div class="card-title">
+
+            <h2>
+                Réseau Wi-Fi
+            </h2>
+
+            <div class="live">
+                <span class="live-dot"></span>
+                VIRTUEL
+            </div>
+
+        </div>
+
+
+        <div class="network-grid">
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    SSID
+                </div>
+
+                <div class="info-value ssid">
+                    Missmine_
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    Canal
+                </div>
+
+                <div class="info-value channel">
+                    CH 6
+                </div>
+
+            </div>
+
+
+            <div class="info-box">
+
+                <div class="info-label">
+                    État
+                </div>
+
+                <div
+                    id="networkState"
+                    class="info-value state">
+
+                    EN ATTENTE
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         APPAREILS
+    ========================== -->
+
+    <section class="card">
+
+        <div class="card-title">
+
+            <h2>
+                Cibles simulées
+            </h2>
+
+            <div
+                id="scanState"
+                class="live">
+
+                <span class="live-dot"></span>
+
+                ARRÊTÉ
+
+            </div>
+
+        </div>
+
+
+        <div class="devices">
+
+
+            <!-- APPAREIL 1 -->
+
+            <div class="device">
+
+                <div class="device-header">
+
+                    <span class="device-name">
+                        APPAREIL 01
+                    </span>
+
+                    <span class="device-status">
+                        RSSI LIVE
+                    </span>
+
+                </div>
+
+
+                <div class="mac">
+                    E8:A0:CD:6D:54:64
+                </div>
+
+
+                <div class="rssi-row">
+
+                    <span class="info-label">
+                        SIGNAL
+                    </span>
+
+                    <span
+                        id="rssi1"
+                        class="rssi">
+
+                        -90 dBm
+
+                    </span>
+
+                </div>
+
+
+                <div class="signal-bar">
+
+                    <div
+                        id="bar1"
+                        class="signal-fill">
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="distance1"
+                    class="device-distance">
+
+                    Distance simulée : 50 m
+
+                </div>
+
+            </div>
+
+
+
+            <!-- APPAREIL 2 -->
+
+            <div class="device">
+
+                <div class="device-header">
+
+                    <span class="device-name">
+                        APPAREIL 02
+                    </span>
+
+                    <span class="device-status">
+                        RSSI LIVE
+                    </span>
+
+                </div>
+
+
+                <div class="mac">
+                    C8:91:43:B9:CA:FC
+                </div>
+
+
+                <div class="rssi-row">
+
+                    <span class="info-label">
+                        SIGNAL
+                    </span>
+
+                    <span
+                        id="rssi2"
+                        class="rssi">
+
+                        -90 dBm
+
+                    </span>
+
+                </div>
+
+
+                <div class="signal-bar">
+
+                    <div
+                        id="bar2"
+                        class="signal-fill">
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="distance2"
+                    class="device-distance">
+
+                    Distance simulée : 50 m
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         DEPLACEMENT
+    ========================== -->
+
+    <section class="card">
+
+        <div class="card-title">
+
+            <h2>
+                Recherche de signal
+            </h2>
+
+        </div>
+
+
+        <div class="navigation">
+
+
+            <div class="nav-box">
+
+                <div class="nav-label">
+                    Direction simulée
+                </div>
+
+                <div
+                    id="direction"
+                    class="nav-value direction">
+
+                    --
+
+                </div>
+
+            </div>
+
+
+            <div class="nav-box">
+
+                <div class="nav-label">
+                    Distance estimée
+                </div>
+
+                <div
+                    id="distance"
+                    class="nav-value distance">
+
+                    -- m
+
+                </div>
+
+            </div>
+
+
+            <div class="nav-box">
+
+                <div class="nav-label">
+                    Concordance
+                </div>
+
+                <div
+                    id="convergence"
+                    class="nav-value convergence">
+
+                    --
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="controls">
+
+            <button
+                class="start"
+                onclick="startSimulation()">
+
+                DÉMARRER LA RECHERCHE
+
+            </button>
+
+
+            <button
+                class="stop"
+                onclick="stopSimulation()">
+
+                ARRÊTER
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =========================
+         HISTORIQUE
+    ========================== -->
+
+    <section class="card">
+
+        <div class="card-title">
+
+            <h2>
+                Historique RSSI
+            </h2>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            HEURE
+                        </th>
+
+                        <th>
+                            MAC
+                        </th>
+
+                        <th>
+                            RSSI
+                        </th>
+
+                        <th>
+                            MAC
+                        </th>
+
+                        <th>
+                            RSSI
+                        </th>
+
+                        <th>
+                            ÉCART
+                        </th>
+
+                        <th>
+                            DISTANCE
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="history">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer-info">
+        Simulation virtuelle — aucune mesure radio réelle
+    </div>
+
+</main>
+
+
+<script>
+
+/*
+=====================================================
+SIMULATION
+=====================================================
+
+Le scénario est volontairement virtuel.
+
+La variable "position" représente la distance
+simulée entre l'utilisateur et la zone des appareils.
+
+0   = très proche
+100 = très loin
+
+Les deux RSSI suivent la même évolution avec
+une petite variation indépendante.
+*/
+
+
+let simulationTimer = null;
+
+let position = 100;
+
+let direction = -1;
+
+let running = false;
+
+
+/* =========================
+   CALCUL RSSI
+========================= */
+
+function calculateRSSI(distance) {
+
+    /*
+     * Approximation visuelle.
+     *
+     * 100 m → environ -90 dBm
+     * 50 m  → environ -75 dBm
+     * 25 m  → environ -60 dBm
+     * 10 m  → environ -45 dBm
+     * 2 m   → environ -32 dBm
+     */
+
+    const base =
+        -30 -
+        (distance * 0.60);
+
+    return Math.round(base);
+
+}
+
+
+/* =========================
+   NOUVELLE MESURE
+========================= */
+
+function updateSimulation() {
+
+    /*
+     * Petit déplacement simulé.
+     */
+
+    position += direction * 2;
+
+
+    /*
+     * Quand on arrive proche,
+     * on repart progressivement.
+     */
+
+    if (position <= 3) {
+
+        position = 3;
+
+        direction = 1;
+
+    }
+
+
+    if (position >= 100) {
+
+        position = 100;
+
+        direction = -1;
+
+    }
+
+
+    const baseRSSI =
+        calculateRSSI(position);
+
+
+    /*
+     * Petit bruit radio.
+     */
+
+    const noise1 =
+        Math.round(
+            Math.random() * 4 - 2
+        );
+
+
+    const noise2 =
+        Math.round(
+            Math.random() * 4 - 2
+        );
+
+
+    const rssi1 =
+        baseRSSI + noise1;
+
+
+    const rssi2 =
+        baseRSSI + noise2;
+
+
+    updateDisplay(
+        rssi1,
+        rssi2
+    );
+
+}
+
+
+/* =========================
+   AFFICHAGE
+========================= */
+
+function updateDisplay(
+    rssi1,
+    rssi2
+) {
+
+    document
+        .getElementById("rssi1")
+        .textContent =
+        rssi1 + " dBm";
+
+
+    document
+        .getElementById("rssi2")
+        .textContent =
+        rssi2 + " dBm";
+
+
+    /*
+     * Barre de signal.
+     */
+
+    const percent1 =
+        Math.max(
+            4,
+            Math.min(
+                100,
+                (rssi1 + 100) * 1.45
+            )
+        );
+
+
+    const percent2 =
+        Math.max(
+            4,
+            Math.min(
+                100,
+                (rssi2 + 100) * 1.45
+            )
+        );
+
+
+    document
+        .getElementById("bar1")
+        .style.width =
+        percent1 + "%";
+
+
+    document
+        .getElementById("bar2")
+        .style.width =
+        percent2 + "%";
+
+
+    /*
+     * Même zone de distance.
+     */
+
+    const distance1 =
+        Math.max(
+            1,
+            Math.round(
+                position +
+                (Math.random() * 4 - 2)
+            )
+        );
+
+
+    const distance2 =
+        Math.max(
+            1,
+            Math.round(
+                position +
+                (Math.random() * 4 - 2)
+            )
+        );
+
+
+    document
+        .getElementById("distance1")
+        .textContent =
+        "Distance simulée : " +
+        distance1 +
+        " m";
+
+
+    document
+        .getElementById("distance2")
+        .textContent =
+        "Distance simulée : " +
+        distance2 +
+        " m";
+
+
+    /*
+     * Écart RSSI.
+     */
+
+    const difference =
+        Math.abs(
+            rssi1 - rssi2
+        );
+
+
+    const convergence =
+        document.getElementById(
+            "convergence"
+        );
+
+
+    if (difference <= 3) {
+
+        convergence.textContent =
+            "FORTE";
+
+        convergence.className =
+            "nav-value convergence";
+
+    } else if (difference <= 6) {
+
+        convergence.textContent =
+            "BONNE";
+
+        convergence.className =
+            "nav-value convergence";
+
+    } else {
+
+        convergence.textContent =
+            "FAIBLE";
+
+        convergence.className =
+            "nav-value direction";
+
+    }
+
+
+    /*
+     * Direction.
+     */
+
+    const directionElement =
+        document.getElementById(
+            "direction"
+        );
+
+
+    if (direction < 0) {
+
+        directionElement.textContent =
+            "← PLUS PROCHE";
+
+    } else {
+
+        directionElement.textContent =
+            "→ PLUS LOIN";
+
+    }
+
+
+    /*
+     * Distance centrale.
+     */
+
+    document
+        .getElementById("distance")
+        .textContent =
+        Math.round(position) +
+        " m";
+
+
+    /*
+     * Etat réseau.
+     */
+
+    document
+        .getElementById("networkState")
+        .textContent =
+        "RECHERCHE";
+
+
+    /*
+     * Historique.
+     */
+
+    addHistory(
+        rssi1,
+        rssi2,
+        difference
+    );
+
+}
+
+
+/* =========================
+   HISTORIQUE
+========================= */
+
+function addHistory(
+    rssi1,
+    rssi2,
+    difference
+) {
+
+    const body =
+        document.getElementById(
+            "history"
+        );
+
+
+    const row =
+        document.createElement("tr");
+
+
+    row.innerHTML = `
+
+        <td>
+            ${getTime()}
+        </td>
+
+        <td>
+            E8:A0:CD:6D:54:64
+        </td>
+
+        <td class="good">
+            ${rssi1} dBm
+        </td>
+
+        <td>
+            C8:91:43:B9:CA:FC
+        </td>
+
+        <td class="good">
+            ${rssi2} dBm
+        </td>
+
+        <td class="${
+            difference <= 5
+                ? "good"
+                : "warning"
+        }">
+
+            ${difference} dB
+
+        </td>
+
+        <td>
+            ${Math.round(position)} m
+        </td>
+
+    `;
+
+
+    body.prepend(row);
+
+
+    while (
+        body.children.length > 60
+    ) {
+
+        body.removeChild(
+            body.lastChild
+        );
+
+    }
+
+}
+
+
+/* =========================
+   DEMARRER
+========================= */
+
+function startSimulation() {
+
+    stopSimulation();
+
+
+    running = true;
+
+    position = 100;
+
+    direction = -1;
+
+
+    document
+        .getElementById(
+            "scanState"
+        )
+        .innerHTML = `
+
+            <span class="live-dot"></span>
+            RECHERCHE
+
+        `;
+
+
+    document
+        .getElementById(
+            "networkState"
+        )
+        .textContent =
+        "RECHERCHE";
+
+
+    /*
+     * Première mesure immédiate.
+     */
+
+    updateSimulation();
+
+
+    /*
+     * Déplacement virtuel toutes les 2 secondes.
+     */
+
+    simulationTimer =
+        setInterval(
+            updateSimulation,
+            2000
+        );
+
+}
+
+
+/* =========================
+   ARRET
+========================= */
+
+function stopSimulation() {
+
+    running = false;
+
+
+    if (simulationTimer) {
+
+        clearInterval(
+            simulationTimer
+        );
+
+        simulationTimer = null;
+
+    }
+
+
+    document
+        .getElementById(
+            "scanState"
+        )
+        .innerHTML = `
+
+            <span class="live-dot"></span>
+            ARRÊTÉ
+
+        `;
+
+
+    document
+        .getElementById(
+            "networkState"
+        )
+        .textContent =
+        "EN ATTENTE";
+
+}
+
+
+/* =========================
+   HEURE
+========================= */
+
+function getTime() {
+
+    return new Date()
+        .toLocaleTimeString(
+            "fr-FR",
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+}
+
+</script>
+
+</body>
+</html>
+```
