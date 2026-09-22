@@ -1,16 +1,20 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>WiFi Analyzer</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     min-height: 100%;
@@ -23,15 +27,23 @@ body {
     overflow-x: hidden;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header {
     width: 100%;
     height: 70px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     padding: 0 25px;
+
     background: #0b0f14;
     border-bottom: 1px solid #202832;
+
     position: sticky;
     top: 0;
     z-index: 10;
@@ -42,17 +54,59 @@ body {
     font-weight: 700;
     letter-spacing: 2px;
     cursor: pointer;
+    user-select: none;
 }
 
 .logo span {
     color: #ff7a00;
 }
 
+.logo:hover span {
+    color: #ff9b42;
+}
+
+.wifi-button {
+    width: 44px;
+    height: 44px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #303943;
+    border-radius: 50%;
+
+    background: #121820;
+    color: #66717c;
+
+    font-size: 20px;
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.wifi-button:hover {
+    border-color: #ff7a00;
+    color: #ff7a00;
+}
+
+.wifi-button.active {
+    border-color: #42e695;
+    color: #42e695;
+
+    box-shadow:
+        0 0 10px rgba(66,230,149,.25);
+}
+
 .live {
     display: flex;
     align-items: center;
     gap: 7px;
+
     color: #42e695;
+
     font-size: 12px;
     font-weight: bold;
 }
@@ -60,20 +114,34 @@ body {
 .live-dot {
     width: 7px;
     height: 7px;
+
     border-radius: 50%;
+
     background: #42e695;
-    box-shadow: 0 0 8px #42e695;
+
+    box-shadow:
+        0 0 8px #42e695;
 }
+
+/* =========================
+   CONTAINER
+========================= */
 
 .container {
     width: min(1200px, calc(100% - 30px));
     margin: 25px auto 50px;
 }
 
+/* =========================
+   CARD
+========================= */
+
 .card {
     background: #0b0f14;
+
     border: 1px solid #202832;
     border-radius: 10px;
+
     padding: 20px;
     margin-bottom: 18px;
 }
@@ -82,11 +150,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     margin-bottom: 18px;
 }
 
 .card-title h2 {
     margin: 0;
+
     font-size: 16px;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -104,21 +174,27 @@ body {
 
 .info-box {
     padding: 15px;
+
     background: #080c10;
+
     border: 1px solid #1d252e;
     border-radius: 7px;
 }
 
 .info-label {
     color: #89939e;
+
     font-size: 10px;
+
     text-transform: uppercase;
     letter-spacing: .7px;
+
     margin-bottom: 8px;
 }
 
 .info-value {
     font-family: monospace;
+
     font-size: 16px;
     font-weight: bold;
 }
@@ -135,27 +211,52 @@ body {
     color: #42e695;
 }
 
+.state.off {
+    color: #89939e;
+}
+
+.state.search {
+    color: #ffb15c;
+}
+
 /* =========================
    APPAREILS
 ========================= */
 
 .devices {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     gap: 15px;
 }
 
 .device {
     background: #080c10;
+
     border: 1px solid #1d252e;
     border-radius: 7px;
+
     padding: 16px;
+
+    transition:
+        border-color .25s,
+        box-shadow .25s;
+}
+
+.device.receiving {
+    border-color: rgba(66,230,149,.35);
+
+    box-shadow:
+        0 0 18px rgba(66,230,149,.04);
 }
 
 .device-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     margin-bottom: 10px;
 }
 
@@ -165,49 +266,73 @@ body {
 
 .device-status {
     font-size: 10px;
+
+    color: #66717c;
+}
+
+.device-status.receiving {
     color: #42e695;
 }
 
 .mac {
     color: #89939e;
+
     font-family: monospace;
     font-size: 12px;
+
     margin-bottom: 15px;
 }
 
 .rssi-row {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
 }
 
 .rssi {
     font-family: monospace;
+
     font-size: 27px;
     font-weight: bold;
+
+    color: #66717c;
+}
+
+.rssi.active {
     color: #42e695;
 }
 
 .signal-bar {
     width: 100%;
     height: 8px;
+
     background: #151c23;
+
     border-radius: 10px;
+
     overflow: hidden;
+
     margin-top: 10px;
 }
 
 .signal-fill {
     height: 100%;
-    width: 5%;
+    width: 0%;
+
     background: #42e695;
-    transition: width .7s ease;
+
+    transition:
+        width .35s ease;
 }
 
 .device-distance {
     margin-top: 12px;
+
     font-family: monospace;
-    color: #89939e;
+
+    color: #66717c;
+
     font-size: 11px;
 }
 
@@ -217,27 +342,37 @@ body {
 
 .navigation {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
     gap: 12px;
 }
 
 .nav-box {
     padding: 18px;
+
     background: #080c10;
+
     border: 1px solid #1d252e;
     border-radius: 7px;
+
     text-align: center;
 }
 
 .nav-label {
     color: #89939e;
+
     font-size: 10px;
+
     text-transform: uppercase;
+
     margin-bottom: 10px;
 }
 
 .nav-value {
     font-family: monospace;
+
     font-size: 20px;
     font-weight: bold;
 }
@@ -260,21 +395,36 @@ body {
 
 .controls {
     display: flex;
+
     gap: 10px;
+
     margin-top: 18px;
+
+    flex-wrap: wrap;
 }
 
 button {
     height: 42px;
+
     border-radius: 6px;
+
     padding: 0 22px;
+
     border: 1px solid #303943;
+
     background: #121820;
+
     color: #e8edf2;
+
     cursor: pointer;
+
     font-weight: bold;
+
     font-size: 12px;
+
     letter-spacing: .5px;
+
+    transition: .2s;
 }
 
 button:hover {
@@ -301,43 +451,103 @@ button.stop:hover {
     color: white;
 }
 
+button.analyzer {
+    border-color: #42e695;
+    color: #42e695;
+}
+
+button.analyzer:hover {
+    background: #42e695;
+    color: #05070a;
+}
+
+button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+/* =========================
+   MESSAGE
+========================= */
+
+.action-info {
+    margin-top: 14px;
+
+    padding: 12px;
+
+    background: #080c10;
+
+    border: 1px solid #1d252e;
+
+    border-radius: 6px;
+
+    color: #89939e;
+
+    font-family: monospace;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+}
+
+.action-info strong {
+    color: #ff7a00;
+}
+
 /* =========================
    HISTORIQUE
 ========================= */
 
 .table-wrapper {
     width: 100%;
+
     overflow-x: auto;
+
     max-height: 420px;
+
     overflow-y: auto;
 }
 
 table {
     width: 100%;
+
     border-collapse: collapse;
+
     min-width: 700px;
+
     font-family: monospace;
 }
 
 thead {
     position: sticky;
+
     top: 0;
+
     background: #10161d;
 }
 
 th {
     text-align: left;
+
     padding: 12px;
+
     color: #89939e;
+
     font-size: 10px;
+
     font-weight: normal;
-    border-bottom: 1px solid #252e38;
+
+    border-bottom:
+        1px solid #252e38;
 }
 
 td {
     padding: 10px 12px;
+
     font-size: 11px;
-    border-bottom: 1px solid #161d24;
+
+    border-bottom:
+        1px solid #161d24;
 }
 
 .good {
@@ -350,7 +560,9 @@ td {
 
 .footer-info {
     color: #66717c;
+
     font-size: 11px;
+
     text-align: right;
 }
 
@@ -366,6 +578,7 @@ td {
 
     .container {
         width: calc(100% - 20px);
+
         margin-top: 15px;
     }
 
@@ -382,445 +595,547 @@ td {
     .logo {
         font-size: 18px;
     }
+
+    .controls {
+        flex-direction: column;
+    }
+
+    .controls button {
+        width: 100%;
+    }
+
 }
+
 </style>
 </head>
 
+
 <body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
 
 <header class="header">
 
-    <div class="logo">
+    <div
+        class="logo"
+        onclick="analyzerClick()"
+        title="ANALYZER">
+
         WIFI <span>ANALYZER</span>
+
     </div>
 
+
+    <button
+        id="wifiButton"
+        class="wifi-button"
+        onclick="toggleWifi()"
+        title="Activer / désactiver la réception">
+
+        ◉
+
+    </button>
+
 </header>
+
 
 
 <main class="container">
 
 
-    <!-- =========================
-         RESEAU
-    ========================== -->
+<!-- =========================
+     RESEAU
+========================= -->
 
-    <section class="card">
+<section class="card">
 
-        <div class="card-title">
+    <div class="card-title">
 
-            <h2>
-                Réseau Wi-Fi
-            </h2>
+        <h2>
+            Réseau Wi-Fi
+        </h2>
 
-            <div class="live">
-                <span class="live-dot"></span>
-                VIRTUEL
+        <div
+            id="networkLive"
+            class="live">
+
+            <span class="live-dot"></span>
+
+            VIRTUEL
+
+        </div>
+
+    </div>
+
+
+    <div class="network-grid">
+
+
+        <div class="info-box">
+
+            <div class="info-label">
+                SSID
+            </div>
+
+            <div class="info-value ssid">
+                Missmine_
             </div>
 
         </div>
 
 
-        <div class="network-grid">
+        <div class="info-box">
 
-            <div class="info-box">
-
-                <div class="info-label">
-                    SSID
-                </div>
-
-                <div class="info-value ssid">
-                    Missmine_
-                </div>
-
+            <div class="info-label">
+                Canal
             </div>
 
-
-            <div class="info-box">
-
-                <div class="info-label">
-                    Canal
-                </div>
-
-                <div class="info-value channel">
-                    CH 6
-                </div>
-
-            </div>
-
-
-            <div class="info-box">
-
-                <div class="info-label">
-                    État
-                </div>
-
-                <div
-                    id="networkState"
-                    class="info-value state">
-
-                    EN ATTENTE
-
-                </div>
-
+            <div class="info-value channel">
+                CH 6
             </div>
 
         </div>
 
-    </section>
 
+        <div class="info-box">
 
-
-    <!-- =========================
-         APPAREILS
-    ========================== -->
-
-    <section class="card">
-
-        <div class="card-title">
-
-            <h2>
-                Cibles simulées
-            </h2>
+            <div class="info-label">
+                État
+            </div>
 
             <div
-                id="scanState"
-                class="live">
+                id="networkState"
+                class="info-value state off">
 
-                <span class="live-dot"></span>
-
-                ARRÊTÉ
+                EN ATTENTE
 
             </div>
 
         </div>
 
-
-        <div class="devices">
-
-
-            <!-- APPAREIL 1 -->
-
-            <div class="device">
-
-                <div class="device-header">
-
-                    <span class="device-name">
-                        APPAREIL 01
-                    </span>
-
-                    <span class="device-status">
-                        RSSI LIVE
-                    </span>
-
-                </div>
-
-
-                <div class="mac">
-                    E8:A0:CD:6D:54:64
-                </div>
-
-
-                <div class="rssi-row">
-
-                    <span class="info-label">
-                        SIGNAL
-                    </span>
-
-                    <span
-                        id="rssi1"
-                        class="rssi">
-
-                        -90 dBm
-
-                    </span>
-
-                </div>
-
-
-                <div class="signal-bar">
-
-                    <div
-                        id="bar1"
-                        class="signal-fill">
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="distance1"
-                    class="device-distance">
-
-                    Distance simulée : 50 m
-
-                </div>
-
-            </div>
-
-
-
-            <!-- APPAREIL 2 -->
-
-            <div class="device">
-
-                <div class="device-header">
-
-                    <span class="device-name">
-                        APPAREIL 02
-                    </span>
-
-                    <span class="device-status">
-                        RSSI LIVE
-                    </span>
-
-                </div>
-
-
-                <div class="mac">
-                    C8:91:43:B9:CA:FC
-                </div>
-
-
-                <div class="rssi-row">
-
-                    <span class="info-label">
-                        SIGNAL
-                    </span>
-
-                    <span
-                        id="rssi2"
-                        class="rssi">
-
-                        -90 dBm
-
-                    </span>
-
-                </div>
-
-
-                <div class="signal-bar">
-
-                    <div
-                        id="bar2"
-                        class="signal-fill">
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="distance2"
-                    class="device-distance">
-
-                    Distance simulée : 50 m
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================
-         DEPLACEMENT
-    ========================== -->
-
-    <section class="card">
-
-        <div class="card-title">
-
-            <h2>
-                Recherche de signal
-            </h2>
-
-        </div>
-
-
-        <div class="navigation">
-
-
-            <div class="nav-box">
-
-                <div class="nav-label">
-                    Direction simulée
-                </div>
-
-                <div
-                    id="direction"
-                    class="nav-value direction">
-
-                    --
-
-                </div>
-
-            </div>
-
-
-            <div class="nav-box">
-
-                <div class="nav-label">
-                    Distance estimée
-                </div>
-
-                <div
-                    id="distance"
-                    class="nav-value distance">
-
-                    -- m
-
-                </div>
-
-            </div>
-
-
-            <div class="nav-box">
-
-                <div class="nav-label">
-                    Concordance
-                </div>
-
-                <div
-                    id="convergence"
-                    class="nav-value convergence">
-
-                    --
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="controls">
-
-            <button
-                class="start"
-                onclick="startSimulation()">
-
-                DÉMARRER LA RECHERCHE
-
-            </button>
-
-
-            <button
-                class="stop"
-                onclick="stopSimulation()">
-
-                ARRÊTER
-
-            </button>
-
-        </div>
-
-    </section>
-
-
-
-    <!-- =========================
-         HISTORIQUE
-    ========================== -->
-
-    <section class="card">
-
-        <div class="card-title">
-
-            <h2>
-                Historique RSSI
-            </h2>
-
-        </div>
-
-
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            HEURE
-                        </th>
-
-                        <th>
-                            MAC
-                        </th>
-
-                        <th>
-                            RSSI
-                        </th>
-
-                        <th>
-                            MAC
-                        </th>
-
-                        <th>
-                            RSSI
-                        </th>
-
-                        <th>
-                            ÉCART
-                        </th>
-
-                        <th>
-                            DISTANCE
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody id="history">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-
-    <div class="footer-info">
-        Simulation virtuelle — aucune mesure radio réelle
     </div>
+
+</section>
+
+
+
+<!-- =========================
+     APPAREILS
+========================= -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Cibles
+        </h2>
+
+
+        <div
+            id="scanState"
+            class="live">
+
+            <span class="live-dot"></span>
+
+            ARRÊTÉ
+
+        </div>
+
+    </div>
+
+
+
+    <div class="devices">
+
+
+        <!-- APPAREIL 01 -->
+
+        <div
+            id="device1"
+            class="device">
+
+            <div class="device-header">
+
+                <span class="device-name">
+                    APPAREIL 01
+                </span>
+
+                <span
+                    id="status1"
+                    class="device-status">
+
+                    NON CONNECTÉ
+
+                </span>
+
+            </div>
+
+
+            <div class="mac">
+                E8:A0:CD:6D:54:64
+            </div>
+
+
+            <div class="rssi-row">
+
+                <span class="info-label">
+                    SIGNAL
+                </span>
+
+                <span
+                    id="rssi1"
+                    class="rssi">
+
+                    0 réception
+
+                </span>
+
+            </div>
+
+
+            <div class="signal-bar">
+
+                <div
+                    id="bar1"
+                    class="signal-fill">
+                </div>
+
+            </div>
+
+
+            <div
+                id="distance1"
+                class="device-distance">
+
+                Distance : --
+
+            </div>
+
+        </div>
+
+
+
+        <!-- APPAREIL 02 -->
+
+        <div
+            id="device2"
+            class="device">
+
+            <div class="device-header">
+
+                <span class="device-name">
+                    APPAREIL 02
+                </span>
+
+                <span
+                    id="status2"
+                    class="device-status">
+
+                    NON CONNECTÉ
+
+                </span>
+
+            </div>
+
+
+            <div class="mac">
+                C8:91:43:B9:CA:FC
+            </div>
+
+
+            <div class="rssi-row">
+
+                <span class="info-label">
+                    SIGNAL
+                </span>
+
+                <span
+                    id="rssi2"
+                    class="rssi">
+
+                    0 réception
+
+                </span>
+
+            </div>
+
+
+            <div class="signal-bar">
+
+                <div
+                    id="bar2"
+                    class="signal-fill">
+                </div>
+
+            </div>
+
+
+            <div
+                id="distance2"
+                class="device-distance">
+
+                Distance : --
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     RECHERCHE
+========================= -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Recherche de signal
+        </h2>
+
+    </div>
+
+
+    <div class="navigation">
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                Direction
+            </div>
+
+            <div
+                id="direction"
+                class="nav-value direction">
+
+                --
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                Distance estimée
+            </div>
+
+            <div
+                id="distance"
+                class="nav-value distance">
+
+                -- m
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-box">
+
+            <div class="nav-label">
+                État analyse
+            </div>
+
+            <div
+                id="convergence"
+                class="nav-value convergence">
+
+                --
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="controls">
+
+        <button
+            class="start"
+            onclick="startSimulation()">
+
+            DÉMARRER LA RECHERCHE
+
+        </button>
+
+
+        <button
+            class="analyzer"
+            onclick="analyzerClick()">
+
+            ANALYZER
+
+        </button>
+
+
+        <button
+            class="stop"
+            onclick="stopSimulation()">
+
+            ARRÊTER
+
+        </button>
+
+    </div>
+
+
+
+    <div class="action-info">
+
+        <strong>UTILISATION :</strong><br>
+
+        1. Démarrer la recherche.<br>
+        2. Activer le bouton WIFI en haut à droite.<br>
+        3. Cliquer sur <strong>ANALYZER</strong> pour avancer vers les cibles.<br>
+        4. Cliquer à nouveau pour repartir dans l'autre sens.<br><br>
+
+        Distance virtuelle :
+        <strong>20 m → 18 m → 16 m → ... → 5 m</strong>
+        puis retour vers 20 m.
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     HISTORIQUE
+========================= -->
+
+<section class="card">
+
+    <div class="card-title">
+
+        <h2>
+            Historique RSSI
+        </h2>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        HEURE
+                    </th>
+
+                    <th>
+                        MAC
+                    </th>
+
+                    <th>
+                        RSSI
+                    </th>
+
+                    <th>
+                        MAC
+                    </th>
+
+                    <th>
+                        RSSI
+                    </th>
+
+                    <th>
+                        DISTANCE
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="history">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<div class="footer-info">
+
+    Simulation virtuelle — aucune mesure radio réelle
+
+</div>
+
 
 </main>
 
 
+
 <script>
 
-/*
-=====================================================
-SIMULATION
-=====================================================
-
-Le scénario est volontairement virtuel.
-
-La variable "position" représente la distance
-simulée entre l'utilisateur et la zone des appareils.
-
-0   = très proche
-100 = très loin
-
-Les deux RSSI suivent la même évolution avec
-une petite variation indépendante.
-*/
+/* =====================================================
+   WIFI ANALYZER — SIMULATION
+===================================================== */
 
 
-let simulationTimer = null;
-
-let position = 100;
-
-let direction = -1;
+/* =========================
+   VARIABLES
+========================= */
 
 let running = false;
+
+let reception = false;
+
+
+/*
+ * Distance initiale.
+ *
+ * Les deux appareils sont toujours
+ * considérés dans la même zone.
+ */
+
+let distance = 20;
+
+
+/*
+ * -1 = on se rapproche
+ * +1 = on s'éloigne
+ */
+
+let movementDirection = -1;
+
+
+/*
+ * Chaque clic modifie la distance
+ * de 2 mètres.
+ */
+
+const STEP = 2;
+
+
+/*
+ * Limites absolues.
+ */
+
+const MIN_DISTANCE = 5;
+const MAX_DISTANCE = 20;
+
 
 
 /* =========================
@@ -830,77 +1145,422 @@ let running = false;
 function calculateRSSI(distance) {
 
     /*
-     * Approximation visuelle.
+     * Valeurs purement visuelles.
      *
-     * 100 m → environ -90 dBm
-     * 50 m  → environ -75 dBm
-     * 25 m  → environ -60 dBm
-     * 10 m  → environ -45 dBm
-     * 2 m   → environ -32 dBm
+     * 20 m ≈ -60 dBm
+     * 15 m ≈ -55 dBm
+     * 10 m ≈ -49 dBm
+     * 5 m  ≈ -40 dBm
      */
 
     const base =
-        -30 -
-        (distance * 0.60);
+        -34 -
+        (distance * 1.30);
 
     return Math.round(base);
+}
+
+
+
+/* =========================
+   DEMARRER RECHERCHE
+========================= */
+
+function startSimulation() {
+
+    running = true;
+
+
+    /*
+     * Au démarrage de la recherche,
+     * aucune réception n'est encore active.
+     */
+
+    reception = false;
+
+
+    distance = MAX_DISTANCE;
+
+    movementDirection = -1;
+
+
+    resetReception();
+
+
+    document
+        .getElementById("scanState")
+        .innerHTML = `
+            <span class="live-dot"></span>
+            RECHERCHE
+        `;
+
+
+    const networkState =
+        document.getElementById("networkState");
+
+    networkState.textContent =
+        "RECHERCHE";
+
+    networkState.className =
+        "info-value state search";
+
+
+    /*
+     * Le bouton WIFI doit être activé
+     * manuellement.
+     */
+
+    updateWifiButton();
+
+
+    /*
+     * Message d'information.
+     */
+
+    document
+        .getElementById("convergence")
+        .textContent =
+        "EN ATTENTE";
 
 }
 
 
+
 /* =========================
-   NOUVELLE MESURE
+   WIFI ON / OFF
 ========================= */
 
-function updateSimulation() {
+function toggleWifi() {
 
     /*
-     * Petit déplacement simulé.
+     * Le WIFI ne fonctionne que
+     * pendant une recherche.
      */
 
-    position += direction * 2;
+    if (!running) {
 
-
-    /*
-     * Quand on arrive proche,
-     * on repart progressivement.
-     */
-
-    if (position <= 3) {
-
-        position = 3;
-
-        direction = 1;
+        return;
 
     }
 
 
-    if (position >= 100) {
+    reception = !reception;
 
-        position = 100;
 
-        direction = -1;
+    updateWifiButton();
+
+
+    if (reception) {
+
+        enableReception();
+
+    } else {
+
+        resetReception();
 
     }
 
+}
+
+
+
+/* =========================
+   BOUTON WIFI
+========================= */
+
+function updateWifiButton() {
+
+    const button =
+        document.getElementById(
+            "wifiButton"
+        );
+
+
+    if (reception) {
+
+        button.classList.add(
+            "active"
+        );
+
+        button.textContent = "◉";
+
+        button.title =
+            "Réception active — cliquer pour couper";
+
+    } else {
+
+        button.classList.remove(
+            "active"
+        );
+
+        button.textContent = "◉";
+
+        button.title =
+            "Activer la réception";
+
+    }
+
+}
+
+
+
+/* =========================
+   ACTIVATION RECEPTION
+========================= */
+
+function enableReception() {
+
+    /*
+     * Les deux appareils commencent
+     * à être reçus simultanément.
+     */
+
+    setDeviceReceiving(
+        1,
+        true
+    );
+
+    setDeviceReceiving(
+        2,
+        true
+    );
+
+
+    document
+        .getElementById("networkState")
+        .textContent =
+        "RÉCEPTION ACTIVE";
+
+
+    document
+        .getElementById("networkState")
+        .className =
+        "info-value state";
+
+
+    /*
+     * Affiche immédiatement
+     * la distance actuelle.
+     */
+
+    updateSignal();
+
+
+    document
+        .getElementById("convergence")
+        .textContent =
+        "ACTIVE";
+
+}
+
+
+
+/* =========================
+   ETAT APPAREIL
+========================= */
+
+function setDeviceReceiving(
+    deviceNumber,
+    active
+) {
+
+    const device =
+        document.getElementById(
+            "device" + deviceNumber
+        );
+
+
+    const status =
+        document.getElementById(
+            "status" + deviceNumber
+        );
+
+
+    const rssi =
+        document.getElementById(
+            "rssi" + deviceNumber
+        );
+
+
+    if (active) {
+
+        device.classList.add(
+            "receiving"
+        );
+
+        status.classList.add(
+            "receiving"
+        );
+
+        status.textContent =
+            "RÉCEPTION";
+
+        rssi.classList.add(
+            "active"
+        );
+
+    } else {
+
+        device.classList.remove(
+            "receiving"
+        );
+
+        status.classList.remove(
+            "receiving"
+        );
+
+        status.textContent =
+            "NON CONNECTÉ";
+
+        rssi.classList.remove(
+            "active"
+        );
+
+    }
+
+}
+
+
+
+/* =========================
+   ANALYZER
+========================= */
+
+function analyzerClick() {
+
+    /*
+     * Il faut d'abord lancer
+     * la recherche.
+     */
+
+    if (!running) {
+
+        return;
+
+    }
+
+
+    /*
+     * Il faut ensuite activer
+     * la réception WIFI.
+     */
+
+    if (!reception) {
+
+        return;
+
+    }
+
+
+    /*
+     * Déplacement de 2 mètres.
+     */
+
+    distance +=
+        movementDirection * STEP;
+
+
+    /*
+     * Limite basse.
+     */
+
+    if (
+        distance <=
+        MIN_DISTANCE
+    ) {
+
+        distance =
+            MIN_DISTANCE;
+
+        /*
+         * Le prochain clic
+         * repart vers l'extérieur.
+         */
+
+        movementDirection = 1;
+
+    }
+
+
+    /*
+     * Limite haute.
+     */
+
+    if (
+        distance >=
+        MAX_DISTANCE
+    ) {
+
+        distance =
+            MAX_DISTANCE;
+
+        /*
+         * Le prochain clic
+         * repart vers l'intérieur.
+         */
+
+        movementDirection = -1;
+
+    }
+
+
+    /*
+     * Mise à jour du signal.
+     */
+
+    updateSignal();
+
+
+    /*
+     * Historique.
+     */
+
+    addHistory();
+
+}
+
+
+
+/* =========================
+   SIGNAL
+========================= */
+
+function updateSignal() {
+
+    if (!reception) {
+
+        return;
+
+    }
+
+
+    /*
+     * RSSI central.
+     */
 
     const baseRSSI =
-        calculateRSSI(position);
+        calculateRSSI(
+            distance
+        );
 
 
     /*
-     * Petit bruit radio.
+     * Les deux appareils
+     * restent dans la même zone.
+     *
+     * Petite variation indépendante
+     * pour donner un aspect naturel.
      */
 
     const noise1 =
         Math.round(
-            Math.random() * 4 - 2
+            Math.random() * 2 - 1
         );
 
 
     const noise2 =
         Math.round(
-            Math.random() * 4 - 2
+            Math.random() * 2 - 1
         );
 
 
@@ -912,22 +1572,9 @@ function updateSimulation() {
         baseRSSI + noise2;
 
 
-    updateDisplay(
-        rssi1,
-        rssi2
-    );
-
-}
-
-
-/* =========================
-   AFFICHAGE
-========================= */
-
-function updateDisplay(
-    rssi1,
-    rssi2
-) {
+    /*
+     * RSSI.
+     */
 
     document
         .getElementById("rssi1")
@@ -942,25 +1589,25 @@ function updateDisplay(
 
 
     /*
-     * Barre de signal.
+     * Barres.
      */
 
     const percent1 =
         Math.max(
-            4,
+            5,
             Math.min(
                 100,
-                (rssi1 + 100) * 1.45
+                (rssi1 + 100) * 1.5
             )
         );
 
 
     const percent2 =
         Math.max(
-            4,
+            5,
             Math.min(
                 100,
-                (rssi2 + 100) * 1.45
+                (rssi2 + 100) * 1.5
             )
         );
 
@@ -978,86 +1625,35 @@ function updateDisplay(
 
 
     /*
-     * Même zone de distance.
+     * Même distance pour les deux.
+     *
+     * Pas de comparaison de portée.
      */
-
-    const distance1 =
-        Math.max(
-            1,
-            Math.round(
-                position +
-                (Math.random() * 4 - 2)
-            )
-        );
-
-
-    const distance2 =
-        Math.max(
-            1,
-            Math.round(
-                position +
-                (Math.random() * 4 - 2)
-            )
-        );
-
 
     document
         .getElementById("distance1")
         .textContent =
-        "Distance simulée : " +
-        distance1 +
+        "Distance : " +
+        distance +
         " m";
 
 
     document
         .getElementById("distance2")
         .textContent =
-        "Distance simulée : " +
-        distance2 +
+        "Distance : " +
+        distance +
         " m";
 
 
     /*
-     * Écart RSSI.
+     * Distance centrale.
      */
 
-    const difference =
-        Math.abs(
-            rssi1 - rssi2
-        );
-
-
-    const convergence =
-        document.getElementById(
-            "convergence"
-        );
-
-
-    if (difference <= 3) {
-
-        convergence.textContent =
-            "FORTE";
-
-        convergence.className =
-            "nav-value convergence";
-
-    } else if (difference <= 6) {
-
-        convergence.textContent =
-            "BONNE";
-
-        convergence.className =
-            "nav-value convergence";
-
-    } else {
-
-        convergence.textContent =
-            "FAIBLE";
-
-        convergence.className =
-            "nav-value direction";
-
-    }
+    document
+        .getElementById("distance")
+        .textContent =
+        distance + " m";
 
 
     /*
@@ -1070,7 +1666,9 @@ function updateDisplay(
         );
 
 
-    if (direction < 0) {
+    if (
+        movementDirection < 0
+    ) {
 
         directionElement.textContent =
             "← PLUS PROCHE";
@@ -1084,48 +1682,220 @@ function updateDisplay(
 
 
     /*
-     * Distance centrale.
+     * Etat de l'analyse.
      */
+
+    document
+        .getElementById("convergence")
+        .textContent =
+        "ACTIVE";
+
+}
+
+
+
+/* =========================
+   RESET RECEPTION
+========================= */
+
+function resetReception() {
+
+    /*
+     * Etat des appareils.
+     */
+
+    setDeviceReceiving(
+        1,
+        false
+    );
+
+    setDeviceReceiving(
+        2,
+        false
+    );
+
+
+    /*
+     * RSSI.
+     */
+
+    document
+        .getElementById("rssi1")
+        .textContent =
+        "0 réception";
+
+
+    document
+        .getElementById("rssi2")
+        .textContent =
+        "0 réception";
+
+
+    /*
+     * Barres vides.
+     */
+
+    document
+        .getElementById("bar1")
+        .style.width =
+        "0%";
+
+
+    document
+        .getElementById("bar2")
+        .style.width =
+        "0%";
+
+
+    /*
+     * Distances appareils.
+     */
+
+    document
+        .getElementById("distance1")
+        .textContent =
+        "Distance : --";
+
+
+    document
+        .getElementById("distance2")
+        .textContent =
+        "Distance : --";
+
+
+    /*
+     * Navigation.
+     */
+
+    document
+        .getElementById("direction")
+        .textContent =
+        "--";
+
 
     document
         .getElementById("distance")
         .textContent =
-        Math.round(position) +
-        " m";
+        "-- m";
+
+
+    document
+        .getElementById("convergence")
+        .textContent =
+        "--";
 
 
     /*
      * Etat réseau.
      */
 
+    if (running) {
+
+        document
+            .getElementById("networkState")
+            .textContent =
+            "RECHERCHE";
+
+        document
+            .getElementById("networkState")
+            .className =
+            "info-value state search";
+
+    } else {
+
+        document
+            .getElementById("networkState")
+            .textContent =
+            "EN ATTENTE";
+
+        document
+            .getElementById("networkState")
+            .className =
+            "info-value state off";
+
+    }
+
+}
+
+
+
+/* =========================
+   ARRET
+========================= */
+
+function stopSimulation() {
+
+    running = false;
+
+    reception = false;
+
+    distance =
+        MAX_DISTANCE;
+
+    movementDirection = -1;
+
+
+    resetReception();
+
+
+    updateWifiButton();
+
+
+    document
+        .getElementById("scanState")
+        .innerHTML = `
+            <span class="live-dot"></span>
+            ARRÊTÉ
+        `;
+
+
     document
         .getElementById("networkState")
         .textContent =
-        "RECHERCHE";
+        "EN ATTENTE";
 
 
-    /*
-     * Historique.
-     */
-
-    addHistory(
-        rssi1,
-        rssi2,
-        difference
-    );
+    document
+        .getElementById("networkState")
+        .className =
+        "info-value state off";
 
 }
+
 
 
 /* =========================
    HISTORIQUE
 ========================= */
 
-function addHistory(
-    rssi1,
-    rssi2,
-    difference
-) {
+function addHistory() {
+
+    if (!reception) {
+
+        return;
+
+    }
+
+
+    const baseRSSI =
+        calculateRSSI(
+            distance
+        );
+
+
+    const rssi1 =
+        baseRSSI +
+        Math.round(
+            Math.random() * 2 - 1
+        );
+
+
+    const rssi2 =
+        baseRSSI +
+        Math.round(
+            Math.random() * 2 - 1
+        );
+
 
     const body =
         document.getElementById(
@@ -1134,7 +1904,9 @@ function addHistory(
 
 
     const row =
-        document.createElement("tr");
+        document.createElement(
+            "tr"
+        );
 
 
     row.innerHTML = `
@@ -1159,18 +1931,8 @@ function addHistory(
             ${rssi2} dBm
         </td>
 
-        <td class="${
-            difference <= 5
-                ? "good"
-                : "warning"
-        }">
-
-            ${difference} dB
-
-        </td>
-
         <td>
-            ${Math.round(position)} m
+            ${distance} m
         </td>
 
     `;
@@ -1178,6 +1940,10 @@ function addHistory(
 
     body.prepend(row);
 
+
+    /*
+     * Maximum 60 lignes.
+     */
 
     while (
         body.children.length > 60
@@ -1191,103 +1957,6 @@ function addHistory(
 
 }
 
-
-/* =========================
-   DEMARRER
-========================= */
-
-function startSimulation() {
-
-    stopSimulation();
-
-
-    running = true;
-
-    position = 100;
-
-    direction = -1;
-
-
-    document
-        .getElementById(
-            "scanState"
-        )
-        .innerHTML = `
-
-            <span class="live-dot"></span>
-            RECHERCHE
-
-        `;
-
-
-    document
-        .getElementById(
-            "networkState"
-        )
-        .textContent =
-        "RECHERCHE";
-
-
-    /*
-     * Première mesure immédiate.
-     */
-
-    updateSimulation();
-
-
-    /*
-     * Déplacement virtuel toutes les 2 secondes.
-     */
-
-    simulationTimer =
-        setInterval(
-            updateSimulation,
-            2000
-        );
-
-}
-
-
-/* =========================
-   ARRET
-========================= */
-
-function stopSimulation() {
-
-    running = false;
-
-
-    if (simulationTimer) {
-
-        clearInterval(
-            simulationTimer
-        );
-
-        simulationTimer = null;
-
-    }
-
-
-    document
-        .getElementById(
-            "scanState"
-        )
-        .innerHTML = `
-
-            <span class="live-dot"></span>
-            ARRÊTÉ
-
-        `;
-
-
-    document
-        .getElementById(
-            "networkState"
-        )
-        .textContent =
-        "EN ATTENTE";
-
-}
 
 
 /* =========================
@@ -1307,6 +1976,33 @@ function getTime() {
         );
 
 }
+
+
+
+/* =========================
+   INITIALISATION
+========================= */
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        running = false;
+
+        reception = false;
+
+        distance =
+            MAX_DISTANCE;
+
+        movementDirection = -1;
+
+
+        resetReception();
+
+        updateWifiButton();
+
+    }
+);
 
 </script>
 
