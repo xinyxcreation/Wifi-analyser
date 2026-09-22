@@ -1,19 +1,17 @@
+```html
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>WiFi Analyzer</title>
 
 <style>
-
 * {
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
     min-height: 100%;
@@ -64,39 +62,37 @@ body {
     color: #ff9b42;
 }
 
-.wifi-button {
-    width: 44px;
-    height: 44px;
-
-    padding: 0;
-
+/* WIFI cliquable */
+.wifi-control {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
 
-    border: 1px solid #303943;
-    border-radius: 50%;
-
-    background: #121820;
     color: #66717c;
 
-    font-size: 20px;
+    font-size: 12px;
+    font-weight: bold;
+
     cursor: pointer;
+    user-select: none;
+
+    padding: 8px 10px;
+    border-radius: 6px;
 
     transition: .2s;
 }
 
-.wifi-button:hover {
-    border-color: #ff7a00;
-    color: #ff7a00;
+.wifi-control:hover {
+    background: #121820;
+    color: #e8edf2;
 }
 
-.wifi-button.active {
-    border-color: #42e695;
+.wifi-control.active {
     color: #42e695;
+}
 
-    box-shadow:
-        0 0 10px rgba(66,230,149,.25);
+.wifi-icon {
+    font-size: 18px;
 }
 
 .live {
@@ -118,8 +114,7 @@ body {
 
     background: #42e695;
 
-    box-shadow:
-        0 0 8px #42e695;
+    box-shadow: 0 0 8px #42e695;
 }
 
 /* =========================
@@ -137,7 +132,6 @@ body {
 
 .card {
     background: #0b0f14;
-
     border: 1px solid #202832;
     border-radius: 10px;
 
@@ -167,7 +161,10 @@ body {
 
 .network-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
     gap: 12px;
 }
 
@@ -225,7 +222,8 @@ body {
 .devices {
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+        1fr 1fr;
 
     gap: 15px;
 }
@@ -244,10 +242,12 @@ body {
 }
 
 .device.receiving {
-    border-color: rgba(66,230,149,.35);
+    border-color:
+        rgba(66,230,149,.35);
 
     box-shadow:
-        0 0 18px rgba(66,230,149,.04);
+        0 0 18px
+        rgba(66,230,149,.04);
 }
 
 .device-header {
@@ -265,7 +265,6 @@ body {
 
 .device-status {
     font-size: 10px;
-
     color: #66717c;
 }
 
@@ -322,7 +321,7 @@ body {
     background: #42e695;
 
     transition:
-        width .35s ease;
+        width .25s ease;
 }
 
 .device-distance {
@@ -460,13 +459,8 @@ button.analyzer:hover {
     color: #05070a;
 }
 
-button:disabled {
-    opacity: .35;
-    cursor: not-allowed;
-}
-
 /* =========================
-   MESSAGE
+   INFO
 ========================= */
 
 .action-info {
@@ -577,7 +571,6 @@ td {
 
     .container {
         width: calc(100% - 20px);
-
         margin-top: 15px;
     }
 
@@ -602,7 +595,6 @@ td {
     .controls button {
         width: 100%;
     }
-
 }
 
 </style>
@@ -628,15 +620,30 @@ td {
     </div>
 
 
-    <button
-        id="wifiButton"
-        class="wifi-button"
+    <!--
+        WIFI EST MAINTENANT
+        DIRECTEMENT CLIQUABLE
+    -->
+
+    <div
+        id="wifiControl"
+        class="wifi-control"
         onclick="toggleWifi()"
         title="Activer / désactiver la réception">
 
-        ◉
+        <span
+            id="wifiIcon"
+            class="wifi-icon">
 
-    </button>
+            ◉
+
+        </span>
+
+        <span>
+            WIFI
+        </span>
+
+    </div>
 
 </header>
 
@@ -662,7 +669,6 @@ td {
             class="live">
 
             <span class="live-dot"></span>
-
             VIRTUEL
 
         </div>
@@ -890,7 +896,7 @@ td {
 
 
 <!-- =========================
-     RECHERCHE
+     ANALYSE
 ========================= -->
 
 <section class="card">
@@ -944,7 +950,7 @@ td {
         <div class="nav-box">
 
             <div class="nav-label">
-                État analyse
+                Analyse
             </div>
 
             <div
@@ -995,16 +1001,21 @@ td {
 
     <div class="action-info">
 
-        <strong>UTILISATION :</strong><br>
+        <strong>FONCTIONNEMENT :</strong><br>
 
-        1. Démarrer la recherche.<br>
-        2. Activer le bouton WIFI en haut à droite.<br>
-        3. Cliquer sur <strong>ANALYZER</strong> pour avancer vers les cibles.<br>
-        4. Cliquer à nouveau pour repartir dans l'autre sens.<br><br>
+        Le premier clic sur <strong>ANALYZER</strong>
+        lance une progression continue vers
+        <strong>5 m</strong>.<br>
 
-        Distance virtuelle :
-        <strong>20 m → 18 m → 16 m → ... → 5 m</strong>
-        puis retour vers 20 m.
+        Les valeurs RSSI évoluent automatiquement
+        avec une variation aléatoire.<br>
+
+        Un nouveau clic sur <strong>ANALYZER</strong>
+        inverse la progression vers
+        <strong>20 m</strong>.<br>
+
+        Chaque nouveau clic inverse à nouveau
+        le sens.
 
     </div>
 
@@ -1075,6 +1086,7 @@ td {
 </section>
 
 
+
 <div class="footer-info">
 
     Simulation virtuelle — aucune mesure radio réelle
@@ -1089,13 +1101,14 @@ td {
 <script>
 
 /* =====================================================
-   WIFI ANALYZER — SIMULATION
+   WIFI ANALYZER
+   SIMULATION VIRTUELLE
 ===================================================== */
 
 
-/* =========================
-   VARIABLES
-========================= */
+/* =====================================================
+   ETAT
+===================================================== */
 
 let running = false;
 
@@ -1103,33 +1116,39 @@ let reception = false;
 
 
 /*
- * Distance initiale.
+ * Distance actuelle.
  *
- * Les deux appareils sont toujours
- * considérés dans la même zone.
+ * Départ : 20 m
  */
 
 let distance = 20;
 
 
 /*
- * -1 = on se rapproche
- * +1 = on s'éloigne
+ * -1 = vers 5 m
+ * +1 = vers 20 m
  */
 
 let movementDirection = -1;
 
 
 /*
- * Chaque clic modifie la distance
- * de 2 mètres.
+ * Le mouvement est-il actif ?
  */
 
-const STEP = 2;
+let analyzerRunning = false;
 
 
 /*
- * Limites absolues.
+ * Timer qui fait évoluer
+ * les valeurs automatiquement.
+ */
+
+let analyzerTimer = null;
+
+
+/*
+ * Limites.
  */
 
 const MIN_DISTANCE = 5;
@@ -1137,45 +1156,25 @@ const MAX_DISTANCE = 20;
 
 
 
-/* =========================
-   CALCUL RSSI
-========================= */
-
-function calculateRSSI(distance) {
-
-    /*
-     * Valeurs purement visuelles.
-     *
-     * 20 m ≈ -60 dBm
-     * 15 m ≈ -55 dBm
-     * 10 m ≈ -49 dBm
-     * 5 m  ≈ -40 dBm
-     */
-
-    const base =
-        -34 -
-        (distance * 1.30);
-
-    return Math.round(base);
-}
-
-
-
-/* =========================
+/* =====================================================
    DEMARRER RECHERCHE
-========================= */
+===================================================== */
 
 function startSimulation() {
 
-    running = true;
-
-
     /*
-     * Au démarrage de la recherche,
-     * aucune réception n'est encore active.
+     * On arrête éventuellement
+     * une ancienne animation.
      */
 
+    stopAnalyzerTimer();
+
+
+    running = true;
+
     reception = false;
+
+    analyzerRunning = false;
 
 
     distance = MAX_DISTANCE;
@@ -1183,8 +1182,16 @@ function startSimulation() {
     movementDirection = -1;
 
 
+    /*
+     * Reset complet.
+     */
+
     resetReception();
 
+
+    /*
+     * Etat recherche.
+     */
 
     document
         .getElementById("scanState")
@@ -1194,46 +1201,34 @@ function startSimulation() {
         `;
 
 
-    const networkState =
-        document.getElementById("networkState");
-
-    networkState.textContent =
+    document
+        .getElementById("networkState")
+        .textContent =
         "RECHERCHE";
 
-    networkState.className =
+
+    document
+        .getElementById("networkState")
+        .className =
         "info-value state search";
 
 
-    /*
-     * Le bouton WIFI doit être activé
-     * manuellement.
-     */
-
-    updateWifiButton();
-
-
-    /*
-     * Message d'information.
-     */
-
-    document
-        .getElementById("convergence")
-        .textContent =
-        "EN ATTENTE";
+    updateWifiDisplay();
 
 }
 
 
 
-/* =========================
-   WIFI ON / OFF
-========================= */
+/* =====================================================
+   WIFI
+===================================================== */
 
 function toggleWifi() {
 
     /*
-     * Le WIFI ne fonctionne que
-     * pendant une recherche.
+     * Impossible d'activer la
+     * réception sans avoir lancé
+     * la recherche.
      */
 
     if (!running) {
@@ -1246,7 +1241,7 @@ function toggleWifi() {
     reception = !reception;
 
 
-    updateWifiButton();
+    updateWifiDisplay();
 
 
     if (reception) {
@@ -1254,6 +1249,10 @@ function toggleWifi() {
         enableReception();
 
     } else {
+
+        stopAnalyzerTimer();
+
+        analyzerRunning = false;
 
         resetReception();
 
@@ -1263,39 +1262,45 @@ function toggleWifi() {
 
 
 
-/* =========================
-   BOUTON WIFI
-========================= */
+/* =====================================================
+   AFFICHAGE WIFI
+===================================================== */
 
-function updateWifiButton() {
+function updateWifiDisplay() {
 
-    const button =
+    const control =
         document.getElementById(
-            "wifiButton"
+            "wifiControl"
+        );
+
+
+    const icon =
+        document.getElementById(
+            "wifiIcon"
         );
 
 
     if (reception) {
 
-        button.classList.add(
+        control.classList.add(
             "active"
         );
 
-        button.textContent = "◉";
+        icon.textContent = "◉";
 
-        button.title =
-            "Réception active — cliquer pour couper";
+        control.title =
+            "Réception active — cliquer pour désactiver";
 
     } else {
 
-        button.classList.remove(
+        control.classList.remove(
             "active"
         );
 
-        button.textContent = "◉";
+        icon.textContent = "◉";
 
-        button.title =
-            "Activer la réception";
+        control.title =
+            "Cliquer pour activer la réception";
 
     }
 
@@ -1303,16 +1308,11 @@ function updateWifiButton() {
 
 
 
-/* =========================
+/* =====================================================
    ACTIVATION RECEPTION
-========================= */
+===================================================== */
 
 function enableReception() {
-
-    /*
-     * Les deux appareils commencent
-     * à être reçus simultanément.
-     */
 
     setDeviceReceiving(
         1,
@@ -1338,8 +1338,7 @@ function enableReception() {
 
 
     /*
-     * Affiche immédiatement
-     * la distance actuelle.
+     * Affiche la première valeur.
      */
 
     updateSignal();
@@ -1348,36 +1347,36 @@ function enableReception() {
     document
         .getElementById("convergence")
         .textContent =
-        "ACTIVE";
+        "PRÊT";
 
 }
 
 
 
-/* =========================
+/* =====================================================
    ETAT APPAREIL
-========================= */
+===================================================== */
 
 function setDeviceReceiving(
-    deviceNumber,
+    number,
     active
 ) {
 
     const device =
         document.getElementById(
-            "device" + deviceNumber
+            "device" + number
         );
 
 
     const status =
         document.getElementById(
-            "status" + deviceNumber
+            "status" + number
         );
 
 
     const rssi =
         document.getElementById(
-            "rssi" + deviceNumber
+            "rssi" + number
         );
 
 
@@ -1421,14 +1420,14 @@ function setDeviceReceiving(
 
 
 
-/* =========================
+/* =====================================================
    ANALYZER
-========================= */
+===================================================== */
 
 function analyzerClick() {
 
     /*
-     * Il faut d'abord lancer
+     * Il faut avoir lancé
      * la recherche.
      */
 
@@ -1440,8 +1439,8 @@ function analyzerClick() {
 
 
     /*
-     * Il faut ensuite activer
-     * la réception WIFI.
+     * Il faut que le WIFI
+     * soit actif.
      */
 
     if (!reception) {
@@ -1452,11 +1451,114 @@ function analyzerClick() {
 
 
     /*
-     * Déplacement de 2 mètres.
+     * Si l'analyse était déjà
+     * en train d'aller vers 5 m,
+     * ce clic inverse vers 20 m.
+     *
+     * Et inversement.
      */
 
+    movementDirection *= -1;
+
+
+    analyzerRunning = true;
+
+
+    /*
+     * Si on vient de démarrer,
+     * le premier clic doit partir
+     * vers 5 m.
+     *
+     * Cas particulier :
+     * au lancement direction = -1.
+     */
+
+    if (
+        distance === MAX_DISTANCE &&
+        movementDirection === 1
+    ) {
+
+        movementDirection = -1;
+
+    }
+
+
+    /*
+     * Démarre le mouvement continu.
+     */
+
+    startAnalyzerTimer();
+
+
+    updateDirectionDisplay();
+
+}
+
+
+
+/* =====================================================
+   TIMER ANALYZER
+===================================================== */
+
+function startAnalyzerTimer() {
+
+    /*
+     * Evite plusieurs timers
+     * en parallèle.
+     */
+
+    stopAnalyzerTimer();
+
+
+    analyzerTimer =
+        setInterval(
+            analyzerTick,
+            450
+        );
+
+}
+
+
+
+/* =====================================================
+   TICK
+===================================================== */
+
+function analyzerTick() {
+
+    if (!running) {
+
+        stopAnalyzerTimer();
+
+        return;
+
+    }
+
+
+    if (!reception) {
+
+        stopAnalyzerTimer();
+
+        return;
+
+    }
+
+
+    /*
+     * Variation aléatoire de distance.
+     *
+     * Entre 0.4 et 1.3 m environ
+     * à chaque mise à jour.
+     */
+
+    const variation =
+        0.4 +
+        Math.random() * 0.9;
+
+
     distance +=
-        movementDirection * STEP;
+        movementDirection *
+        variation;
 
 
     /*
@@ -1472,11 +1574,13 @@ function analyzerClick() {
             MIN_DISTANCE;
 
         /*
-         * Le prochain clic
-         * repart vers l'extérieur.
+         * On arrête l'animation
+         * à la limite.
          */
 
-        movementDirection = 1;
+        stopAnalyzerTimer();
+
+        analyzerRunning = false;
 
     }
 
@@ -1493,21 +1597,21 @@ function analyzerClick() {
         distance =
             MAX_DISTANCE;
 
-        /*
-         * Le prochain clic
-         * repart vers l'intérieur.
-         */
+        stopAnalyzerTimer();
 
-        movementDirection = -1;
+        analyzerRunning = false;
 
     }
 
 
     /*
-     * Mise à jour du signal.
+     * Mise à jour de l'affichage.
      */
 
     updateSignal();
+
+
+    updateDirectionDisplay();
 
 
     /*
@@ -1520,9 +1624,103 @@ function analyzerClick() {
 
 
 
-/* =========================
-   SIGNAL
-========================= */
+/* =====================================================
+   DIRECTION
+===================================================== */
+
+function updateDirectionDisplay() {
+
+    const element =
+        document.getElementById(
+            "direction"
+        );
+
+
+    if (!analyzerRunning) {
+
+        if (
+            distance <=
+            MIN_DISTANCE
+        ) {
+
+            element.textContent =
+                "5 m — MINIMUM";
+
+        } else if (
+            distance >=
+            MAX_DISTANCE
+        ) {
+
+            element.textContent =
+                "20 m — MAXIMUM";
+
+        } else {
+
+            element.textContent =
+                "--";
+
+        }
+
+        return;
+
+    }
+
+
+    if (
+        movementDirection < 0
+    ) {
+
+        element.textContent =
+            "← PLUS PROCHE";
+
+    } else {
+
+        element.textContent =
+            "→ PLUS LOIN";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   CALCUL RSSI
+===================================================== */
+
+function calculateRSSI(
+    currentDistance
+) {
+
+    /*
+     * Plus la distance est faible,
+     * plus le signal est fort.
+     *
+     * Valeurs visuelles :
+     *
+     * 20 m ≈ -60 dBm
+     * 15 m ≈ -54 dBm
+     * 10 m ≈ -47 dBm
+     * 5 m  ≈ -40 dBm
+     */
+
+    const base =
+        -34 -
+        (
+            currentDistance *
+            1.3
+        );
+
+
+    return Math.round(base);
+
+}
+
+
+
+/* =====================================================
+   MISE A JOUR SIGNAL
+===================================================== */
 
 function updateSignal() {
 
@@ -1533,10 +1731,6 @@ function updateSignal() {
     }
 
 
-    /*
-     * RSSI central.
-     */
-
     const baseRSSI =
         calculateRSSI(
             distance
@@ -1544,47 +1738,55 @@ function updateSignal() {
 
 
     /*
-     * Les deux appareils
-     * restent dans la même zone.
+     * Bruit aléatoire.
      *
-     * Petite variation indépendante
-     * pour donner un aspect naturel.
+     * Les deux appareils restent
+     * proches mais ne donnent pas
+     * exactement la même valeur.
      */
 
     const noise1 =
         Math.round(
-            Math.random() * 2 - 1
+            Math.random() * 6 - 3
         );
 
 
     const noise2 =
         Math.round(
-            Math.random() * 2 - 1
+            Math.random() * 6 - 3
         );
 
 
     const rssi1 =
-        baseRSSI + noise1;
+        baseRSSI +
+        noise1;
 
 
     const rssi2 =
-        baseRSSI + noise2;
+        baseRSSI +
+        noise2;
 
 
     /*
-     * RSSI.
+     * RSSI appareil 01.
      */
 
     document
         .getElementById("rssi1")
         .textContent =
-        rssi1 + " dBm";
+        rssi1 +
+        " dBm";
 
+
+    /*
+     * RSSI appareil 02.
+     */
 
     document
         .getElementById("rssi2")
         .textContent =
-        rssi2 + " dBm";
+        rssi2 +
+        " dBm";
 
 
     /*
@@ -1614,26 +1816,31 @@ function updateSignal() {
     document
         .getElementById("bar1")
         .style.width =
-        percent1 + "%";
+        percent1 +
+        "%";
 
 
     document
         .getElementById("bar2")
         .style.width =
-        percent2 + "%";
+        percent2 +
+        "%";
 
 
     /*
-     * Même distance pour les deux.
-     *
-     * Pas de comparaison de portée.
+     * Même distance virtuelle
+     * pour les deux appareils.
      */
+
+    const displayDistance =
+        distance.toFixed(1);
+
 
     document
         .getElementById("distance1")
         .textContent =
         "Distance : " +
-        distance +
+        displayDistance +
         " m";
 
 
@@ -1641,7 +1848,7 @@ function updateSignal() {
         .getElementById("distance2")
         .textContent =
         "Distance : " +
-        distance +
+        displayDistance +
         " m";
 
 
@@ -1652,56 +1859,39 @@ function updateSignal() {
     document
         .getElementById("distance")
         .textContent =
-        distance + " m";
+        displayDistance +
+        " m";
 
 
     /*
-     * Direction.
+     * Etat analyse.
      */
 
-    const directionElement =
-        document.getElementById(
-            "direction"
-        );
+    if (analyzerRunning) {
 
-
-    if (
-        movementDirection < 0
-    ) {
-
-        directionElement.textContent =
-            "← PLUS PROCHE";
+        document
+            .getElementById("convergence")
+            .textContent =
+            "ANALYSE";
 
     } else {
 
-        directionElement.textContent =
-            "→ PLUS LOIN";
+        document
+            .getElementById("convergence")
+            .textContent =
+            "PRÊT";
 
     }
-
-
-    /*
-     * Etat de l'analyse.
-     */
-
-    document
-        .getElementById("convergence")
-        .textContent =
-        "ACTIVE";
 
 }
 
 
 
-/* =========================
-   RESET RECEPTION
-========================= */
+/* =====================================================
+   RESET
+===================================================== */
 
 function resetReception() {
-
-    /*
-     * Etat des appareils.
-     */
 
     setDeviceReceiving(
         1,
@@ -1731,7 +1921,7 @@ function resetReception() {
 
 
     /*
-     * Barres vides.
+     * Barres.
      */
 
     document
@@ -1747,7 +1937,7 @@ function resetReception() {
 
 
     /*
-     * Distances appareils.
+     * Distances.
      */
 
     document
@@ -1795,6 +1985,7 @@ function resetReception() {
             .textContent =
             "RECHERCHE";
 
+
         document
             .getElementById("networkState")
             .className =
@@ -1807,6 +1998,7 @@ function resetReception() {
             .textContent =
             "EN ATTENTE";
 
+
         document
             .getElementById("networkState")
             .className =
@@ -1818,18 +2010,47 @@ function resetReception() {
 
 
 
-/* =========================
-   ARRET
-========================= */
+/* =====================================================
+   STOP TIMER
+===================================================== */
+
+function stopAnalyzerTimer() {
+
+    if (
+        analyzerTimer !== null
+    ) {
+
+        clearInterval(
+            analyzerTimer
+        );
+
+        analyzerTimer = null;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   ARRET COMPLET
+===================================================== */
 
 function stopSimulation() {
+
+    stopAnalyzerTimer();
+
 
     running = false;
 
     reception = false;
 
+    analyzerRunning = false;
+
+
     distance =
         MAX_DISTANCE;
+
 
     movementDirection = -1;
 
@@ -1837,7 +2058,7 @@ function stopSimulation() {
     resetReception();
 
 
-    updateWifiButton();
+    updateWifiDisplay();
 
 
     document
@@ -1863,9 +2084,9 @@ function stopSimulation() {
 
 
 
-/* =========================
+/* =====================================================
    HISTORIQUE
-========================= */
+===================================================== */
 
 function addHistory() {
 
@@ -1885,14 +2106,14 @@ function addHistory() {
     const rssi1 =
         baseRSSI +
         Math.round(
-            Math.random() * 2 - 1
+            Math.random() * 6 - 3
         );
 
 
     const rssi2 =
         baseRSSI +
         Math.round(
-            Math.random() * 2 - 1
+            Math.random() * 6 - 3
         );
 
 
@@ -1931,7 +2152,7 @@ function addHistory() {
         </td>
 
         <td>
-            ${distance} m
+            ${distance.toFixed(1)} m
         </td>
 
     `;
@@ -1958,9 +2179,9 @@ function addHistory() {
 
 
 
-/* =========================
+/* =====================================================
    HEURE
-========================= */
+===================================================== */
 
 function getTime() {
 
@@ -1978,9 +2199,9 @@ function getTime() {
 
 
 
-/* =========================
+/* =====================================================
    INITIALISATION
-========================= */
+===================================================== */
 
 window.addEventListener(
     "DOMContentLoaded",
@@ -1990,6 +2211,8 @@ window.addEventListener(
 
         reception = false;
 
+        analyzerRunning = false;
+
         distance =
             MAX_DISTANCE;
 
@@ -1998,7 +2221,7 @@ window.addEventListener(
 
         resetReception();
 
-        updateWifiButton();
+        updateWifiDisplay();
 
     }
 );
