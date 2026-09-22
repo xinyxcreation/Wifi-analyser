@@ -16,7 +16,6 @@
             --text:#d9e2ea;
             --muted:#71808d;
             --green:#00e676;
-            --blue:#29b6f6;
             --purple:#9c6cff;
         }
 
@@ -52,7 +51,9 @@
             font-family:"Segoe UI",Arial,sans-serif;
         }
 
-        /* HEADER */
+        /* =========================
+           HEADER
+        ========================= */
 
         .header {
             border-bottom:1px solid var(--border);
@@ -91,16 +92,20 @@
             color:var(--green);
             font-weight:900;
 
-            box-shadow:0 0 15px rgba(0,230,118,.20);
+            box-shadow:
+                0 0 15px rgba(0,230,118,.20);
         }
 
-        /* MAIN */
+        /* =========================
+           MAIN
+        ========================= */
 
         main {
             width:min(1000px,calc(100% - 32px));
             margin:auto;
 
             padding:70px 0;
+
             text-align:center;
         }
 
@@ -126,7 +131,9 @@
             font-size:16px;
         }
 
-        /* TOOLS */
+        /* =========================
+           TOOLS
+        ========================= */
 
         .tools {
             display:grid;
@@ -143,11 +150,12 @@
 
             padding:38px 30px;
 
-            background:linear-gradient(
-                145deg,
-                var(--panel2),
-                var(--panel)
-            );
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--panel2),
+                    var(--panel)
+                );
 
             border:1px solid var(--border);
             border-radius:16px;
@@ -163,6 +171,7 @@
 
         .tool:hover {
             transform:translateY(-5px);
+
             border-color:var(--green);
 
             box-shadow:
@@ -177,6 +186,10 @@
                 0 10px 35px rgba(0,0,0,.35),
                 0 0 25px rgba(156,108,255,.10);
         }
+
+        /* =========================
+           ICONS
+        ========================= */
 
         .tool-icon {
             width:72px;
@@ -207,6 +220,10 @@
                 0 0 20px rgba(156,108,255,.12);
         }
 
+        /* =========================
+           TITRES
+        ========================= */
+
         .tool h2 {
             margin:0 0 10px;
 
@@ -222,6 +239,10 @@
             max-width:360px;
         }
 
+        /* =========================
+           BOUTONS
+        ========================= */
+
         .button {
             margin-top:25px;
 
@@ -233,6 +254,15 @@
             color:#000;
 
             font-weight:800;
+
+            transition:
+                transform .2s,
+                filter .2s;
+        }
+
+        .tool:hover .button {
+            transform:translateY(-1px);
+            filter:brightness(1.1);
         }
 
         .spoof .button {
@@ -240,7 +270,9 @@
             color:white;
         }
 
-        /* FOOTER */
+        /* =========================
+           FOOTER
+        ========================= */
 
         footer {
             margin-top:auto;
@@ -255,7 +287,9 @@
             border-top:1px solid var(--border);
         }
 
-        /* MOBILE */
+        /* =========================
+           MOBILE
+        ========================= */
 
         @media(max-width:700px) {
 
@@ -275,111 +309,148 @@
                 padding:32px 22px;
             }
         }
+
+        @media(max-width:400px) {
+
+            main {
+                width:calc(100% - 20px);
+            }
+
+            .tool {
+                padding:28px 18px;
+            }
+
+            .tool h2 {
+                font-size:21px;
+            }
+
+            .tool-icon {
+                width:64px;
+                height:64px;
+                font-size:26px;
+            }
+        }
     </style>
 </head>
 
+
 <body>
 
-<header class="header">
+    <!-- =========================
+         HEADER
+    ========================= -->
 
-    <div class="header-inner">
+    <header class="header">
 
-        <div class="logo">
+        <div class="header-inner">
 
-            <div class="logo-icon">
-                Wi
-            </div>
+            <div class="logo">
 
-            <div>
-                WIFI TOOLS
+                <div class="logo-icon">
+                    Wi
+                </div>
+
+                <div>
+                    WIFI TOOLS
+                </div>
+
             </div>
 
         </div>
 
-    </div>
-
-</header>
+    </header>
 
 
-<main>
+    <!-- =========================
+         MAIN
+    ========================= -->
 
-    <section class="hero">
+    <main>
 
-        <h1>
-            <span>WiFi</span> Tools
-        </h1>
+        <section class="hero">
 
-        <p>
-            Sélectionnez l'outil que vous souhaitez utiliser.
-        </p>
-
-    </section>
-
-
-    <section class="tools">
-
-        <!-- WIFI ANALYZER -->
-
-        <a
-            class="tool"
-            href="https://github.com/xinyxcreation/Wifi-analyser/blob/main/Wifi-analyzer.html"
-        >
-
-            <div class="tool-icon">
-                Wi
-            </div>
-
-            <h2>
-                WiFi Analyzer
-            </h2>
+            <h1>
+                <span>WiFi</span> Tools
+            </h1>
 
             <p>
-                Analyse du réseau Wi-Fi et visualisation
-                des communications détectées.
+                Sélectionnez l'outil que vous souhaitez utiliser.
             </p>
 
-            <div class="button">
-                OUVRIR L'ANALYZER
-            </div>
-
-        </a>
+        </section>
 
 
-        <!-- WIFI SPOOF -->
+        <section class="tools">
 
-        <a
-            class="tool spoof"
-            href="https://github.com/xinyxcreation/Wifi-analyser/blob/main/Wifi-spoof.html"
-        >
+            <!-- =====================
+                 WIFI ANALYZER
+            ====================== -->
 
-            <div class="tool-icon">
-                ≋
-            </div>
+            <a
+                class="tool"
+                href="https://xinyxcreation.github.io/Wifi-analyser/Wifi-analyzer.html"
+            >
 
-            <h2>
-                WiFi Spoof
-            </h2>
+                <div class="tool-icon">
+                    Wi
+                </div>
 
-            <p>
-                Outil Wi-Fi Spoof pour vos tests
-                et expérimentations réseau.
-            </p>
+                <h2>
+                    WiFi Analyzer
+                </h2>
 
-            <div class="button">
-                OUVRIR LE SPOOF
-            </div>
+                <p>
+                    Analyse du réseau Wi-Fi et visualisation
+                    des communications détectées.
+                </p>
 
-        </a>
+                <div class="button">
+                    OUVRIR L'ANALYZER
+                </div>
 
-    </section>
-
-</main>
+            </a>
 
 
-<footer>
-    WiFi Tools — XinyxCreation
-</footer>
+            <!-- =====================
+                 WIFI SPOOF
+            ====================== -->
 
+            <a
+                class="tool spoof"
+                href="https://xinyxcreation.github.io/Wifi-analyser/Wifi-spoof.html"
+            >
+
+                <div class="tool-icon">
+                    ≋
+                </div>
+
+                <h2>
+                    WiFi Spoof
+                </h2>
+
+                <p>
+                    Outil Wi-Fi Spoof pour vos tests
+                    et expérimentations réseau.
+                </p>
+
+                <div class="button">
+                    OUVRIR LE SPOOF
+                </div>
+
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+        WiFi Tools — XinyxCreation
+    </footer>
 
 </body>
 </html>
